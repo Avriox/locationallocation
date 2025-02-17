@@ -1,40 +1,47 @@
 #' @export
-allocation <- function(demand_raster, sf_area, friction=friction, weights=NULL, dowscaling_model_type, mode, objectiveminutes=10, objectiveshare=0.01){
+allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime=traveltime_raster, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max"){
 
-  if(!exists(friction)){print("Error"); break} else{
-
-    assign("demand_raster", demand_raster, envir = .GlobalEnv)
-
+  options(error = expression(NULL), warn=-1)
     require(tidyverse)
-
+    require(raster)
+    require(sf)
+    require(gdistance)
     options(error = expression(NULL), warn=-1)
 
-    totalpopconstant = cellStats(pop, 'sum', na.rm = TRUE)
+    assign("boundary", sf_area, envir = .GlobalEnv)
 
-    pop <- overlay(pop, t1, fun = function(x, y) {
+    demand_raster <- mask_raster_to_polygon(demand_raster, sf_area)
+    traveltime <- mask_raster_to_polygon(traveltime, sf_area)
+
+    totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
+
+    traveltime = raster::projectRaster(traveltime, demand_raster)
+
+    demand_raster <-  raster::overlay(demand_raster, traveltime, fun = function(x, y) {
       x[y<=objectiveminutes] <- NA
       return(x)
     })
 
-    T.filename <- 'study.area.T.rds'
-    T.GC.filename <- 'study.area.T.GC.rds'
-
-    old_facilities <- cooling %>% dplyr::select(geometry)
-
     repeat {
-      all = rasterToPoints(pop, spatial=TRUE)
+      all = rasterToPoints(demand_raster, spatial=TRUE)
 
-      # all <- sp.kde(x = st_as_sf(all), y = all$layer, bw = 0.0083333,
-      #               ref = terra::rast(pop), res=0.0008333333,
-      #               standardize = TRUE,
-      #               scale.factor = 10000)
+      if(heur=="kd"){
 
-      if(risk_optim==T){
-        all = which.max(pop*wbgt) # optimize based on risk (exposure*hazard), and not on exposure only
+        all <- sp.kde(x = st_as_sf(all), y = all$layer, bw = 0.0083333,
+                  ref = terra::rast(demand_raster), res=0.0008333333,
+                  standardize = TRUE,
+                  scale.factor = 10000)
+
+      } else if (heur =="max"){
+
+      if(!is.null(weights)){
+        weights <- mask_raster_to_polygon(weights, sf_area)
+        all = raster::which.max(demand_raster*weights) # optimize based on risk (exposure*hazard), and not on exposure only
       } else{
-        all = which.max(pop)
-      }
-      pos = as.data.frame(xyFromCell(pop, all))
+        all = raster::which.max(demand_raster)
+      }} else {print("Error"); break}
+
+      pos = as.data.frame(xyFromCell(demand_raster, all))
 
       new_facilities <- if(exists("new_facilities")){
         rbind(new_facilities, st_as_sf(pos, coords = c("x", "y"), crs = 4326))
@@ -42,15 +49,13 @@ allocation <- function(demand_raster, sf_area, friction=friction, weights=NULL, 
         st_as_sf(pos, coords = c("x", "y"), crs = 4326)
       }
 
-      merged_facilities <- rbind(new_facilities, old_facilities)
+      merged_facilities <- bind_rows(as.data.frame(st_geometry(facilities)), as.data.frame(new_facilities))
 
       points = as.data.frame(st_coordinates(merged_facilities$geometry))
 
       # Fetch the number of points
       temp <- dim(points)
       n.points <- temp[1]
-
-      T.GC <- readRDS(T.GC.filename)
 
       # Convert the points into a matrix
       xy.data.frame <- data.frame()
@@ -61,21 +66,25 @@ allocation <- function(demand_raster, sf_area, friction=friction, weights=NULL, 
       # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
       t34_new <- accCost(T.GC, xy.matrix)
 
-      t34_new = crop(t34_new, extent(pop))
+      t34_new = crop(t34_new, extent(demand_raster))
 
-      t34_new <- projectRaster(t34_new, pop)
+      t34_new <- projectRaster(t34_new, demand_raster)
 
-      pop <- overlay(pop, t34_new, fun = function(x, y) {
+      t34_new <- mask_raster_to_polygon(t34_new, sf_area)
+
+      demand_raster <- overlay(demand_raster, t34_new, fun = function(x, y) {
         x[y<=objectiveminutes] <- NA
         return(x)
       })
 
-      k = cellStats(pop, 'sum', na.rm = TRUE)/totalpopconstant
-      print(paste0("Fraction of population >target mins away:  ", k))
+      k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+      print(paste0("Fraction of unmet demand:  ", k*100, " %"))
       # exit if the condition is met
       if (k<objectiveshare) break
     }
 
-    return(merged_facilities)
+    outer <- list(merged_facilities[-c(1:nrow(facilities)),], t34_new)
 
-  }}
+    return(outer)
+
+  }
