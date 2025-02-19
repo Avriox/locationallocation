@@ -1,5 +1,5 @@
 #' @export
-allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime=traveltime_raster, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max"){
+allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime_raster=traveltime_raster_out, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max"){
 
   options(error = expression(NULL), warn=-1)
     require(tidyverse)
@@ -11,18 +11,24 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
     assign("boundary", sf_area, envir = .GlobalEnv)
 
     demand_raster <- mask_raster_to_polygon(demand_raster, sf_area)
-    traveltime <- mask_raster_to_polygon(traveltime, sf_area)
+    traveltime_raster <- mask_raster_to_polygon(traveltime_raster, sf_area)
 
     totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
-    traveltime = raster::projectRaster(traveltime, demand_raster)
+    traveltime_raster = raster::projectRaster(traveltime_raster, demand_raster)
 
-    demand_raster <-  raster::overlay(demand_raster, traveltime, fun = function(x, y) {
+    demand_raster <-  raster::overlay(demand_raster, traveltime_raster, fun = function(x, y) {
       x[y<=objectiveminutes] <- NA
       return(x)
     })
 
+    iter <- 1
+    k_save <- c(1)
+
     repeat {
+
+      iter <- iter + 1
+
       all = rasterToPoints(demand_raster, spatial=TRUE)
 
       if(heur=="kd"){
@@ -64,27 +70,40 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
       xy.matrix <- as.matrix(xy.data.frame)
 
       # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-      t34_new <- accCost(T.GC, xy.matrix)
+      traveltime_raster_new <- accCost(T.GC, xy.matrix)
 
-      t34_new = crop(t34_new, extent(demand_raster))
+      traveltime_raster_new = crop(traveltime_raster_new, extent(demand_raster))
 
-      t34_new <- projectRaster(t34_new, demand_raster)
+      traveltime_raster_new <- projectRaster(traveltime_raster_new, demand_raster)
 
-      t34_new <- mask_raster_to_polygon(t34_new, sf_area)
+      traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
 
-      demand_raster <- overlay(demand_raster, t34_new, fun = function(x, y) {
+      demand_raster <- overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
         x[y<=objectiveminutes] <- NA
         return(x)
       })
 
       k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+
+      k_save[iter] = k
+
       print(paste0("Fraction of unmet demand:  ", k*100, " %"))
       # exit if the condition is met
-      if (k<objectiveshare) break
-    }
+      if (k<objectiveshare){ break}
+      else if ( k == k_save[iter-1] ) {
 
-    outer <- list(merged_facilities[-c(1:nrow(facilities)),], t34_new)
+        if(!is.null(weights)){
+          values(demand_raster*weights)[all] <- NA
+        } else{
+          values(demand_raster)[all] <- NA
+        }
+
+    }}
+
+    outer <- list(merged_facilities[-c(1:nrow(facilities)),], traveltime_raster_new)
 
     return(outer)
 
   }
+
+

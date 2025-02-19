@@ -89,7 +89,7 @@ handle <- curl::new_handle(timeout = 120)
 
   ##########
 
-  Tr <- gdistance::transition(friction_dowscaled, function(x) 1/mean(x), 8) # RAM intensive, can be very slow for large areas
+  Tr <- gdistance::transition(friction_dowscaled, function(x) 1/mean(x), 16) # RAM intensive, can be very slow for large areas
 
   assign("Tr", Tr, envir = .GlobalEnv)
 
