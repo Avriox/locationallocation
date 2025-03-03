@@ -1,10 +1,6 @@
 #' @export
 demo_data_load <- function(){
 
-options(error = expression(NULL), warn=-1)
-library(raster)
-library(sf)
-
 boundary <- sf::read_sf(system.file("extdata", "napoli.gpkg", package = "locationallocation"))
 assign("boundary", boundary, envir = .GlobalEnv)
 

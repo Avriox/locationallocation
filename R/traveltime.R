@@ -1,11 +1,6 @@
 #' @export
 traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_output = 100, friction=NULL){
 
-options(error = expression(NULL), warn=-1)
-require(tidyverse)
-require(osmdata)
-require(raster)
-
 assign("boundary", bb_area, envir = .GlobalEnv)
 
 handle <- curl::new_handle(timeout = 120)
@@ -18,13 +13,13 @@ handle <- curl::new_handle(timeout = 120)
     friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__201501_Global_Travel_Speed_Friction_Surface",
                                         extent = matrix(sf::st_bbox(bb_area), ncol=2))
 
-  } else{
+  } else if(mode =="fastest"){
 
 
     friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__202001_Global_Walking_Only_Friction_Surface",
                                         extent = matrix(sf::st_bbox(bb_area), ncol=2))
 
-  }
+  } else{ break}
 
 
     friction <- raster::raster(friction)

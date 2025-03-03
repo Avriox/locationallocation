@@ -1,12 +1,11 @@
 #' @export
-allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime_raster=traveltime_raster_out, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max"){
+allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime_raster=NULL, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output=100){
 
-  options(error = expression(NULL), warn=-1)
-    require(tidyverse)
-    require(raster)
-    require(sf)
-    require(gdistance)
-    options(error = expression(NULL), warn=-1)
+  if(is.null(traveltime_raster)){
+  print("Travel time layer not detected. Running traveltime function first.")
+  traveltime_raster <- traveltime(facilities=facilities, bb_area=sf_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
+
+  }
 
     assign("boundary", sf_area, envir = .GlobalEnv)
 
@@ -29,11 +28,11 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
 
       iter <- iter + 1
 
-      all = rasterToPoints(demand_raster, spatial=TRUE)
+      all =  raster:rasterToPoints(demand_raster, spatial=TRUE)
 
       if(heur=="kd"){
 
-        all <- sp.kde(x = st_as_sf(all), y = all$layer, bw = 0.0083333,
+        all <- spatialEco::sp.kde(x = st_as_sf(all), y = all$layer, bw = 0.0083333,
                   ref = terra::rast(demand_raster), res=0.0008333333,
                   standardize = TRUE,
                   scale.factor = 10000)
@@ -47,17 +46,17 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
         all = raster::which.max(demand_raster)
       }} else {print("Error"); break}
 
-      pos = as.data.frame(xyFromCell(demand_raster, all))
+      pos = as.data.frame(raster::xyFromCell(demand_raster, all))
 
       new_facilities <- if(exists("new_facilities")){
-        rbind(new_facilities, st_as_sf(pos, coords = c("x", "y"), crs = 4326))
+        rbind(new_facilities, sf::st_as_sf(pos, coords = c("x", "y"), crs = 4326))
       } else {
-        st_as_sf(pos, coords = c("x", "y"), crs = 4326)
+        sf::st_as_sf(pos, coords = c("x", "y"), crs = 4326)
       }
 
-      merged_facilities <- bind_rows(as.data.frame(st_geometry(facilities)), as.data.frame(new_facilities))
+      merged_facilities <- bind_rows(as.data.frame(sf::st_geometry(facilities)), as.data.frame(new_facilities))
 
-      points = as.data.frame(st_coordinates(merged_facilities$geometry))
+      points = as.data.frame(sf::st_coordinates(merged_facilities$geometry))
 
       # Fetch the number of points
       temp <- dim(points)
@@ -70,20 +69,20 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
       xy.matrix <- as.matrix(xy.data.frame)
 
       # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-      traveltime_raster_new <- accCost(T.GC, xy.matrix)
+      traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
 
-      traveltime_raster_new = crop(traveltime_raster_new, extent(demand_raster))
+      traveltime_raster_new = raster::crop(traveltime_raster_new, extent(demand_raster))
 
-      traveltime_raster_new <- projectRaster(traveltime_raster_new, demand_raster)
+      traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
       traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
 
-      demand_raster <- overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
+      demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
         x[y<=objectiveminutes] <- NA
         return(x)
       })
 
-      k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+      k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
       k_save[iter] = k
 

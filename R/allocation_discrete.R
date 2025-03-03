@@ -1,13 +1,12 @@
 #' @export
-allocation_discrete <- function(demand_raster, sf_area, facilities, candidate, max_fac = Inf, traveltime_raster, weights=NULL, objectiveminutes=10, heur="max"){
+allocation_discrete <- function(demand_raster, sf_area, facilities=NULL, candidate, max_fac = Inf, traveltime_raster=NULL, weights=NULL, objectiveminutes=10, heur="max"){
 
+  if(is.null(traveltime_raster) & !is.null(facilities)){
+    print("Travel time layer not detected. Running traveltime function first.")
+    traveltime_raster <- traveltime(facilities=facilities, bb_area=sf_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
 
-  options(error = expression(NULL), warn=-1)
-  require(tidyverse)
-  require(raster)
-  require(sf)
-  require(gdistance)
-  options(error = expression(NULL), warn=-1)
+  }
+
 
   facilities <- if(is.null(facilities)){
    st_as_sf(data.frame(x=0,y=0), coords = c("x", "y"), crs = 4326)[-1,]
@@ -38,7 +37,7 @@ allocation_discrete <- function(demand_raster, sf_area, facilities, candidate, m
     return(x)
   })
 
-  k_init = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+  k_init = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
   demand_raster_bk <- demand_raster
 
@@ -46,7 +45,7 @@ allocation_discrete <- function(demand_raster, sf_area, facilities, candidate, m
 
     demand_raster <- demand_raster_bk
 
-    points = rbind(st_coordinates(facilities), st_coordinates(st_as_sf(candidate))[-i,])
+    points = rbind(sf::st_coordinates(facilities), sf::st_coordinates(sf::st_as_sf(candidate))[-i,])
     points <- data.frame(x=points[,1], y=points[,2])
 
     # Fetch the number of points
@@ -60,20 +59,20 @@ allocation_discrete <- function(demand_raster, sf_area, facilities, candidate, m
     xy.matrix <- as.matrix(xy.data.frame)
 
     # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-    traveltime_raster_new <- accCost(T.GC, xy.matrix)
+    traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
 
-    traveltime_raster_new = crop(traveltime_raster_new, extent(demand_raster))
+    traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
-    traveltime_raster_new <- projectRaster(traveltime_raster_new, demand_raster)
+    traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
     traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
 
-    demand_raster <- overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
+    demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
       x[y<=objectiveminutes] <- NA
       return(x)
     })
 
-    k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+    k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
     return(k_init-k)
 
@@ -88,7 +87,7 @@ if(max_fac<Inf){
 
   demand_raster <- demand_raster_bk
 
-  points = rbind(st_coordinates(facilities), st_coordinates(st_as_sf(candidate))[c(indices),])
+  points = rbind(sf::st_coordinates(facilities), sf::st_coordinates(sf::st_as_sf(candidate))[c(indices),])
   points <- data.frame(x=points[,1], y=points[,2])
 
   # Fetch the number of points
@@ -102,22 +101,22 @@ if(max_fac<Inf){
   xy.matrix <- as.matrix(xy.data.frame)
 
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-  traveltime_raster_new <- accCost(T.GC, xy.matrix)
+  traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
 
-  traveltime_raster_new = crop(traveltime_raster_new, extent(demand_raster))
+  traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
-  traveltime_raster_new <- projectRaster(traveltime_raster_new, demand_raster)
+  traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
   traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
 
-  demand_raster <- overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
+  demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
     return(x)
   })
 
-  k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+  k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
-return(outer <- list(st_as_sf(candidate)[c(indices),], traveltime_raster_new, k))
+return(outer <- list(sf::st_as_sf(candidate)[c(indices),], traveltime_raster_new, k))
 
 } else{
 
@@ -125,7 +124,7 @@ return(outer <- list(st_as_sf(candidate)[c(indices),], traveltime_raster_new, k)
 
   demand_raster <- demand_raster_bk
 
-  points = rbind(st_coordinates(facilities), st_coordinates(st_as_sf(candidate)))
+  points = rbind(sf::st_coordinates(facilities), sf::st_coordinates(sf::st_as_sf(candidate)))
   points <- data.frame(x=points[,1], y=points[,2])
 
   # Fetch the number of points
@@ -139,21 +138,21 @@ return(outer <- list(st_as_sf(candidate)[c(indices),], traveltime_raster_new, k)
   xy.matrix <- as.matrix(xy.data.frame)
 
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-  traveltime_raster_new <- accCost(T.GC, xy.matrix)
+  traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
 
-  traveltime_raster_new = crop(traveltime_raster_new, extent(demand_raster))
+  traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
-  traveltime_raster_new <- projectRaster(traveltime_raster_new, demand_raster)
+  traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
   traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
 
-  demand_raster <- overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
+  demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
     return(x)
   })
 
-  k = cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+  k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
-  return(outer <- list(st_as_sf(candidate), traveltime_raster_new, k))
+  return(outer <- list(sf::st_as_sf(candidate), traveltime_raster_new, k))
 
 }}

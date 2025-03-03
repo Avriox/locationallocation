@@ -20,4 +20,7 @@ Imports:
 	dissever,
 	osmdata,
 	fasterize,
-	magrittr
+	magrittr,
+	tidyverse,
+	osmdata,
+	spatialEco
