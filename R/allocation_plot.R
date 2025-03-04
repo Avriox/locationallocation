@@ -1,6 +1,8 @@
 #' @export
 allocation_plot <- function(output_allocation){
 
+  require(ggplot2)
+
   ggplot2::ggplot()+
     theme_void()+
     geom_raster(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(output_allocation[[2]], boundary), xy=T)), aes(x=x, y=y, fill=layer))+

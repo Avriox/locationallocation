@@ -1,5 +1,5 @@
 #' @export
-allocation_discrete <- function(demand_raster, sf_area, facilities=NULL, candidate, max_fac = Inf, traveltime_raster=NULL, weights=NULL, objectiveminutes=10, heur="max"){
+allocation_discrete <- function(demand_raster, sf_area, facilities=NULL, candidate, max_fac = Inf, traveltime_raster=NULL, weights=NULL, objectiveminutes=10, heur="max", dowscaling_model_type, mode, res_output=100){
 
   if(is.null(traveltime_raster) & !is.null(facilities)){
     print("Travel time layer not detected. Running traveltime function first.")
@@ -27,7 +27,7 @@ allocation_discrete <- function(demand_raster, sf_area, facilities=NULL, candida
   } else{
 
     traveltime_raster <- demand_raster
-    values(traveltime_raster) <- 1000
+    raster::values(traveltime_raster) <- 1000
     traveltime_raster <- mask_raster_to_polygon(traveltime_raster, sf_area)
 
   }

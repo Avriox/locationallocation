@@ -5,15 +5,13 @@ assign("boundary", bb_area, envir = .GlobalEnv)
 
 handle <- curl::new_handle(timeout = 120)
 
-  if(is.null(friction)){
-
-  if(mode !="walk"){
+  if(mode =="fastest"){
 
 
     friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__201501_Global_Travel_Speed_Friction_Surface",
                                         extent = matrix(sf::st_bbox(bb_area), ncol=2))
 
-  } else if(mode =="fastest"){
+  } else if(mode =="walk"){
 
 
     friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__202001_Global_Walking_Only_Friction_Surface",
@@ -25,20 +23,13 @@ handle <- curl::new_handle(timeout = 120)
     friction <- raster::raster(friction)
     assign("friction", friction, envir = .GlobalEnv)
 
-    } else {
-
-    friction <- raster::raster(friction)
-    assign("friction", friction, envir = .GlobalEnv)
-
-  }
-
   ###
 
   if (res_output<1000){
 
     x <- osmdata::opq(bbox = st_bbox(bb_area)) %>%
-      add_osm_feature(key = 'highway') %>%
-      osmdata_sf ()
+      osmdata::add_osm_feature(key = 'highway') %>%
+      osmdata::osmdata_sf ()
 
     r <- raster::raster(raster::extent(bb_area |>st_transform(3395)), res = res_output, crs=st_crs(3395)$proj4string)
 
@@ -49,8 +40,8 @@ handle <- curl::new_handle(timeout = 120)
     d <- terra::distance(streets)
 
     d <- terra::project(d, y=st_crs(4326)$proj4string)
-    values(d) <- ifelse(values(d)<0, 0, values(d))
-    values(d) <- ifelse(is.na(values(d)), 0, values(d))
+    terra::values(d) <- ifelse(terra::values(d)<0, 0, terra::values(d))
+    terra::values(d) <- ifelse(is.na(terra::values(d)), 0, terra::values(d))
 
     d <- raster::raster(d)
 
@@ -58,7 +49,7 @@ handle <- curl::new_handle(timeout = 120)
 
     d <- raster::stack(d, d_2)
 
-    names(d) <-paste0("l", 1:nlayers(d))
+    names(d) <-paste0("l", 1:raster::nlayers(d))
 
   min_iter <- 2 # Minimum number of iterations
   max_iter <- 10 # Maximum number of iterations
@@ -97,7 +88,7 @@ handle <- curl::new_handle(timeout = 120)
 
   # assess current accessibility
 
-  points = as.data.frame(sf::st_coordinates(facilities |>st_filter(bb_area)))
+  points = as.data.frame(sf::st_coordinates(facilities |> sf::st_filter(bb_area)))
 
   # Fetch the number of points
   temp <- dim(points)

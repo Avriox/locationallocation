@@ -28,7 +28,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
 
       iter <- iter + 1
 
-      all =  raster:rasterToPoints(demand_raster, spatial=TRUE)
+      all =  raster::rasterToPoints(demand_raster, spatial=TRUE)
 
       if(heur=="kd"){
 
@@ -54,7 +54,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
         sf::st_as_sf(pos, coords = c("x", "y"), crs = 4326)
       }
 
-      merged_facilities <- bind_rows(as.data.frame(sf::st_geometry(facilities)), as.data.frame(new_facilities))
+      merged_facilities <- dplyr::bind_rows(as.data.frame(sf::st_geometry(facilities)), as.data.frame(new_facilities))
 
       points = as.data.frame(sf::st_coordinates(merged_facilities$geometry))
 
@@ -71,7 +71,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
       # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
       traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
 
-      traveltime_raster_new = raster::crop(traveltime_raster_new, extent(demand_raster))
+      traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
       traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
@@ -92,9 +92,9 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
       else if ( k == k_save[iter-1] ) {
 
         if(!is.null(weights)){
-          values(demand_raster*weights)[all] <- NA
+          raster::values(demand_raster*weights)[all] <- NA
         } else{
-          values(demand_raster)[all] <- NA
+          raster::values(demand_raster)[all] <- NA
         }
 
     }}
