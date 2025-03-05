@@ -1,16 +1,16 @@
 #' @export
-allocation <- function(demand_raster, sf_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output=100){
+allocation <- function(demand_raster, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output=100){
 
   if(!exists("traveltime_raster")){
   print("Travel time layer not detected. Running traveltime function first.")
-  traveltime_raster <- traveltime(facilities=facilities, bb_area=sf_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
+  traveltime_raster <- traveltime(facilities=facilities, bb_area=bb_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
 
   }
 
-    assign("boundary", sf_area, envir = .GlobalEnv)
+    assign("boundary", bb_area, envir = .GlobalEnv)
 
-    demand_raster <- mask_raster_to_polygon(demand_raster, sf_area)
-    traveltime_raster <- mask_raster_to_polygon(traveltime_raster, sf_area)
+    demand_raster <- mask_raster_to_polygon(demand_raster, bb_area)
+    traveltime_raster <- mask_raster_to_polygon(traveltime_raster, bb_area)
 
     totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
@@ -38,7 +38,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, weights=NU
       } else if (heur =="max"){
 
       if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
-        weights <- mask_raster_to_polygon(weights, sf_area)
+        weights <- mask_raster_to_polygon(weights, bb_area)
         demand_raster_e <- demand_raster*(weights/mean(values(weights), na.rm=T))
 
         all = raster::which.max(demand_raster_e)
@@ -78,7 +78,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, weights=NU
 
       traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
-      traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, sf_area)
+      traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
       demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
         x[y<=objectiveminutes] <- NA

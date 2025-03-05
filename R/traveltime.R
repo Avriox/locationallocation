@@ -3,7 +3,7 @@ traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_out
 
 assign("boundary", bb_area, envir = .GlobalEnv)
 
-  friction(bb_area = bb_area, mode=mode, res_output=res_output)
+  friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 
   # assess current accessibility
 
