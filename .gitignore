@@ -47,3 +47,14 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+allocation_15mins_fountains.png
+allocation_15mins_fountains_weighted.png
+allocation_discrete_fountains.png
+allocation_discrete_fromscratch_fountains.png
+demo.nb.html
+demo.Rmd
+logo.pptx
+pandoc61fc233271f8.nb.html
+paper/maps_Napoli.pdf
+todo.R
+traveltime_map_fountains.png
