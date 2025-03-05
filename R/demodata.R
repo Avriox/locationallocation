@@ -10,6 +10,9 @@ assign("fountains", fountains, envir = .GlobalEnv)
 pop <- raster::raster(system.file("extdata", "pop_napoli.tif", package = "locationallocation"))
 assign("pop", pop, envir = .GlobalEnv)
 
+hotdays <- raster::raster(system.file("extdata", "hotdays_napoli.tif", package = "locationallocation"))
+assign("hotdays", hotdays, envir = .GlobalEnv)
+
 }
 
 

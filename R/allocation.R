@@ -1,7 +1,7 @@
 #' @export
-allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime_raster=NULL, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output=100){
+allocation <- function(demand_raster, sf_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output=100){
 
-  if(is.null(traveltime_raster)){
+  if(!exists("traveltime_raster")){
   print("Travel time layer not detected. Running traveltime function first.")
   traveltime_raster <- traveltime(facilities=facilities, bb_area=sf_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
 
@@ -28,23 +28,26 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
 
       iter <- iter + 1
 
-      all =  raster::rasterToPoints(demand_raster, spatial=TRUE)
-
       if(heur=="kd"){
 
-        all <- spatialEco::sp.kde(x = st_as_sf(all), y = all$layer, bw = 0.0083333,
+        all <- spatialEco::sp.kde(x = st_as_sf(raster::rasterToPoints(demand_raster, spatial=TRUE)), y = all$layer, bw = 0.0083333,
                   ref = terra::rast(demand_raster), res=0.0008333333,
                   standardize = TRUE,
                   scale.factor = 10000)
 
       } else if (heur =="max"){
 
-      if(!is.null(weights)){
+      if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
         weights <- mask_raster_to_polygon(weights, sf_area)
-        all = raster::which.max(demand_raster*weights) # optimize based on risk (exposure*hazard), and not on exposure only
+        demand_raster_e <- demand_raster*(weights/mean(values(weights), na.rm=T))
+
+        all = raster::which.max(demand_raster_e)
+
       } else{
+
         all = raster::which.max(demand_raster)
-      }} else {print("Error"); break}
+
+      }}
 
       pos = as.data.frame(raster::xyFromCell(demand_raster, all))
 
@@ -91,11 +94,7 @@ allocation <- function(demand_raster, sf_area, facilities=facilities, traveltime
       if (k<objectiveshare){ break}
       else if ( k == k_save[iter-1] ) {
 
-        if(!is.null(weights)){
-          raster::values(demand_raster*weights)[all] <- NA
-        } else{
           raster::values(demand_raster)[all] <- NA
-        }
 
     }}
 
