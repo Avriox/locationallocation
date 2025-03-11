@@ -52,7 +52,7 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/traveltime_map_fountains.png?raw=true" alt="" width="600"/>
 </p>
 
-XXX
+We can now  use the `allocation` function to optmise the spatial allocation of new water fountains to ensure that (virtually) everyone (i.e., the totality of the raster layer specified by the `demand_raster` parameter) can walk to one within 15 minutes, as specified by the `objectiveminutes` parameter:
 
 ``` r
 output_allocation <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15, objectiveshare=0.01, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
@@ -64,7 +64,7 @@ allocation_plot(output_allocation, bb_area = boundary)
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/allocation_15mins_fountains.png?raw=true" alt="" width="600"/>
 </p>
 
-XX
+Note that is is also possible to solve an allocation problem specifying a `weights` parameter, to attribute more relative importance or priority to areas where the demand_raster is overlapping with some weighting factors (defined by another raster layer), such as exposure to hot days, as in the following example:
 
 ``` r
 output_allocation_weighted <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=hotdays, objectiveminutes=15, objectiveshare=0.01, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
@@ -76,7 +76,7 @@ allocation_plot(output_allocation_weighted, bb_area = boundary)
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/allocation_15mins_fountains_weighted.png?raw=true" alt="" width="600"/>
 </p>
 
-XX
+A variant of the allocation problem is the case when the set of candidate locations to allocate new faciltiies is discrete (and not continuous over the study area, as in the previous example). In this case, the user needs to provide a discrete set of location points into the `candidate` parameter of the allocation_discrete function, as well as a maximum number of facilities (`max_fac` parameter) that can be selected among the candidate locations. The function will apply a quasi-optimality heuristic (using a randomisation based approach, where the number of replications - defined by the `n_samples` parameters - will gradually approach the global optimum but it will linearly increase the computational time. 
 
 ``` r
 candidates <- st_sample(boundary, 30)
@@ -90,7 +90,7 @@ allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/allocation_discrete_fountains.png?raw=true" alt="" width="600"/>
 </p>
 
-XX
+Consider also the case of a problem where there are no existing facilities to start with, and hence the discrete location-allocation problem needs to optimise the allocation to cover as much as possible of the demand within the limited set of discrete choices over space to allocate new facilities, as well as the constraint set by the maximum number of allocable facilities:
 
 ``` r
 set.seed(333)
