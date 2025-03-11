@@ -8,9 +8,19 @@ library(locationallocation)
 
 demo_data_load()
 
+#######
+
 raster::plot(pop)
 raster::plot(boundary$geom, add=T, col="transparent")
-raster::plot(fountains$geom, add=T, col="blue")
+raster::plot(st_filter(fountains, boundary)$geom, add=T, col="blue")
+
+#
+png("map_demand_existing_facilities.png", height = 1000, width = 1500, res=200)
+raster::plot(pop)
+raster::plot(boundary$geom, add=T, col="transparent")
+raster::plot(st_filter(fountains, boundary)$geom, add=T, col="blue")
+dev.off()
+#
 
 ####
 

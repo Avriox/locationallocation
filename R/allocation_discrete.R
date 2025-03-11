@@ -1,4 +1,11 @@
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, heur="max", dowscaling_model_type, mode, res_output, n_samples){
 
   if(is.null(traveltime_raster) & !is.null(facilities)){

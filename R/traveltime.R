@@ -1,4 +1,11 @@
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_output = 100, friction=NULL){
 
   out <- friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)

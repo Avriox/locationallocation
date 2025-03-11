@@ -1,4 +1,11 @@
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 traveltime_plot <- function(traveltime, bb_area, facilities=NULL){
 
   require(ggplot2)

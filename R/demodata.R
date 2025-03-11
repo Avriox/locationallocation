@@ -1,4 +1,11 @@
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 demo_data_load <- function(){
 
 boundary <- sf::read_sf(system.file("extdata", "napoli.gpkg", package = "locationallocation"))

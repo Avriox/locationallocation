@@ -1,4 +1,11 @@
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 allocation_plot <- function(output_allocation, bb_area){
 
   require(ggplot2)
@@ -11,7 +18,14 @@ allocation_plot <- function(output_allocation, bb_area){
     ggtitle("Potential locations for new facilities")
 }
 
+#' A Cat Function
+#'
+#' This function allows you to express your love of cats.
+#' @param love Do you love cats? Defaults to TRUE.
+#' @keywords cats
 #' @export
+#' @examples
+
 allocation_plot_discrete <- function(output_allocation, bb_area){
 
   ggplot2::ggplot()+
