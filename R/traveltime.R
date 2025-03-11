@@ -1,9 +1,7 @@
 #' @export
 traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_output = 100, friction=NULL){
 
-assign("boundary", bb_area, envir = .GlobalEnv)
-
-  friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
+  out <- friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 
   # assess current accessibility
 
@@ -20,10 +18,10 @@ assign("boundary", bb_area, envir = .GlobalEnv)
   xy.matrix <- as.matrix(xy.data.frame)
 
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-  t1 <- gdistance::accCost(T.GC, xy.matrix)
+  t1 <- gdistance::accCost(out[[3]], xy.matrix)
 
-  assign("traveltime_raster", t1, envir = .GlobalEnv)
+  t1 <- mask_raster_to_polygon(t1, bb_area)
 
-return(t1)
+return(list(t1, out))
 
 }

@@ -6,20 +6,19 @@ handle <- curl::new_handle(timeout = 120)
 if(mode =="fastest"){
 
 
-  friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__201501_Global_Travel_Speed_Friction_Surface",
+  friction_layer <- malariaAtlas::getRaster(dataset_id = "Accessibility__201501_Global_Travel_Speed_Friction_Surface",
                                       extent = matrix(sf::st_bbox(bb_area), ncol=2))
 
 } else if(mode =="walk"){
 
 
-  friction <- malariaAtlas::getRaster(dataset_id = "Accessibility__202001_Global_Walking_Only_Friction_Surface",
+  friction_layer <- malariaAtlas::getRaster(dataset_id = "Accessibility__202001_Global_Walking_Only_Friction_Surface",
                                       extent = matrix(sf::st_bbox(bb_area), ncol=2))
 
 } else{ break}
 
 
-friction <- raster::raster(friction)
-assign("friction", friction, envir = .GlobalEnv)
+friction_layer <- raster::raster(friction_layer)
 
 ###
 
@@ -54,7 +53,7 @@ if (res_output<1000){
   p_train <- 0.5 # Subsampling of the initial data
 
   res_rf <- dissever::dissever(
-    coarse = friction, # stack of fine resolution covariates
+    coarse = friction_layer, # stack of fine resolution covariates
     fine = d, # coarse resolution raster
     method = dowscaling_model_type, # regression method used for disseveration
     p = p_train, # proportion of pixels sampled for training regression model
@@ -63,23 +62,21 @@ if (res_output<1000){
     verbose=T
   )
 
-  friction_dowscaled <- res_rf$map
+  friction_layer <- res_rf$map
 
 } else{
 
-  friction_dowscaled <- friction
+  friction_layer <- friction_layer
 
 }
 
 ##########
 
-Tr <- gdistance::transition(friction_dowscaled, function(x) 1/mean(x), 16) # RAM intensive, can be very slow for large areas
-
-assign("Tr", Tr, envir = .GlobalEnv)
+Tr <- gdistance::transition(friction_layer, function(x) 1/mean(x), 16) # RAM intensive, can be very slow for large areas
 
 T.GC <- gdistance::geoCorrection(Tr)
 
-assign("T.GC", T.GC, envir = .GlobalEnv)
+return(list(friction_layer, Tr, T.GC))
 
 }
 

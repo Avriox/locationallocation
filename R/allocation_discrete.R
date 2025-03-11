@@ -1,16 +1,18 @@
 #' @export
-allocation_discrete <- function(demand_raster, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, heur="max", dowscaling_model_type, mode, res_output=100, n_samples){
+allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, heur="max", dowscaling_model_type, mode, res_output, n_samples){
 
-  if(!exists("traveltime_raster") & !is.null(facilities)){
+  if(is.null(traveltime_raster) & !is.null(facilities)){
     print("Travel time layer not detected. Running traveltime function first.")
-    traveltime_raster <- traveltime(facilities=facilities, bb_area=bb_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
+    traveltime_raster_outer <- traveltime(facilities=facilities, bb_area=bb_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
 
   } else if(is.null(facilities)) {
 
-    friction(bb_area=bb_area, mode=mode, res_output=res_output)
+    out <- friction(bb_area=bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 
-  }
+  } else if(!is.null(traveltime_raster) & is.null(facilities)) {break}
 
+
+  ###############
 
   facilities <- if(is.null(facilities)){
    st_as_sf(data.frame(x=0,y=0), coords = c("x", "y"), crs = 4326)[-1,]
@@ -18,25 +20,23 @@ allocation_discrete <- function(demand_raster, bb_area, facilities=NULL, candida
     facilities
   }
 
-  assign("boundary", bb_area, envir = .GlobalEnv)
-
   demand_raster <- mask_raster_to_polygon(demand_raster, bb_area)
 
   totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
-  if(!is.null(traveltime_raster)){
-    traveltime_raster = raster::projectRaster(traveltime_raster, demand_raster)
-    traveltime_raster <- mask_raster_to_polygon(traveltime_raster, bb_area)
-
-  } else{
+  if(!exists("traveltime_raster_outer")){
 
     traveltime_raster <- demand_raster
     raster::values(traveltime_raster) <- objectiveminutes + 1
     traveltime_raster <- mask_raster_to_polygon(traveltime_raster, bb_area)
 
+    traveltime_raster_outer <- list(traveltime_raster, out)
+
   }
 
-  demand_raster <-  raster::overlay(demand_raster, traveltime_raster, fun = function(x, y) {
+  traveltime_raster_outer[[1]] <- raster::projectRaster(traveltime_raster_outer[[1]], demand_raster)
+
+  demand_raster <-  raster::overlay(demand_raster, traveltime_raster_outer[[1]], fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
     return(x)
   })
@@ -68,7 +68,7 @@ allocation_discrete <- function(demand_raster, bb_area, facilities=NULL, candida
   xy.matrix <- as.matrix(xy.data.frame)
 
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-  traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
+  traveltime_raster_new <- gdistance::accCost(traveltime_raster_outer[[2]][[3]], xy.matrix)
 
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
@@ -107,7 +107,7 @@ allocation_discrete <- function(demand_raster, bb_area, facilities=NULL, candida
   xy.matrix <- as.matrix(xy.data.frame)
 
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
-  traveltime_raster_new <- gdistance::accCost(T.GC, xy.matrix)
+  traveltime_raster_new <- gdistance::accCost(traveltime_raster_outer[[2]][[3]], xy.matrix)
 
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
