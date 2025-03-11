@@ -9,9 +9,16 @@ locationallocation: an R package to solve Maximal Coverage Location-Allocation p
 
 ## Background
 
-<div style="text-align: justify">
+Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective  in the context
 
-</div>
+Such infrastructure can relate to many domains that are pertinent to climate risk reduction, including public health, public services provision, and logistics.
+
+The MCLA problem is essential in decision-making processes that involve facility placement under resource constraints. Some of the primary reasons why MCLA problems are important include: (i) Efficient Resource Utilization: Many organizations operate with limited resources, such as emergency response units, public health clinics, or distribution centers. The MCLA problem helps optimize the placement of these resources to maximize service coverage, ensuring that the highest number of people benefit from the available facilities; (ii) Emergency Response and Public Safety: In scenarios where response time is crucial, such as ambulance or fire station placement, solving the MCLA problem can directly impact lives. By strategically locating these facilities, authorities can reduce response times and improve emergency preparedness; (iii) Retail and Service Industry Optimization: Businesses often seek to maximize their customer base while minimizing costs. Retail chains, fast-food franchises, and service providers can use MCLA models to identify optimal store locations, improving accessibility for the largest number of potential customers; (iv) infrastructure and Urban Planning: Governments and city planners use MCLA models to determine the best locations for schools, hospitals, and transportation hubs. Properly placed infrastructure ensures equitable access to essential services, reducing disparities in service distribution.
+
+We introduce an R package to solve Maximal Coverage Location-Allocation problems using geospatial data in widely used R programming language geospatial libraries. The locationallocation package allows to produce travel time maps and spatially optimising the allocation of facilities and infrastructure based on spatial accessibility criteria weighted by one or more variables or a function of those. 
+
+We demonstrate how the package can tackle urban-scale climate risk through robust infrastructure assessment and geospatial planning
+
 
 ## Installation
 
