@@ -6,19 +6,13 @@ locationallocation: an R package to solve Maximal Coverage Location-Allocation p
 <img src="https://github.com/giacfalk/locationallocation/blob/main/logo.png?raw=true" alt="" width="300"/>
 </p>
 
+Package developer: Giacomo Falchetta, giacomo.falchetta@cmcc.it
 
 ## Background
 
-Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective  in the context
+Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective. Such infrastructure can relate to many domains that are pertinent to climate risk reduction, including public health, public services provision, and logistics. This class of problems is generally defined as "Maximal Coverage Location-Allocation (MCLA)" spatial optimisation problems.
 
-Such infrastructure can relate to many domains that are pertinent to climate risk reduction, including public health, public services provision, and logistics.
-
-The MCLA problem is essential in decision-making processes that involve facility placement under resource constraints. Some of the primary reasons why MCLA problems are important include: (i) Efficient Resource Utilization: Many organizations operate with limited resources, such as emergency response units, public health clinics, or distribution centers. The MCLA problem helps optimize the placement of these resources to maximize service coverage, ensuring that the highest number of people benefit from the available facilities; (ii) Emergency Response and Public Safety: In scenarios where response time is crucial, such as ambulance or fire station placement, solving the MCLA problem can directly impact lives. By strategically locating these facilities, authorities can reduce response times and improve emergency preparedness; (iii) Retail and Service Industry Optimization: Businesses often seek to maximize their customer base while minimizing costs. Retail chains, fast-food franchises, and service providers can use MCLA models to identify optimal store locations, improving accessibility for the largest number of potential customers; (iv) infrastructure and Urban Planning: Governments and city planners use MCLA models to determine the best locations for schools, hospitals, and transportation hubs. Properly placed infrastructure ensures equitable access to essential services, reducing disparities in service distribution.
-
-We introduce an R package to solve Maximal Coverage Location-Allocation problems using geospatial data in widely used R programming language geospatial libraries. The locationallocation package allows to produce travel time maps and spatially optimising the allocation of facilities and infrastructure based on spatial accessibility criteria weighted by one or more variables or a function of those. 
-
-We demonstrate how the package can tackle urban-scale climate risk through robust infrastructure assessment and geospatial planning
-
+locationallocation, an R package to solve MCLA problems using geospatial data in widely used R programming language geospatial libraries. The locationallocation package allows to produce travel time maps and spatially optimise the allocation of facilities/infrastructure based on spatial accessibility criteria weighted by one or more variables or a function of those. 
 
 ## Installation
 
@@ -38,7 +32,7 @@ First, load the package.
 library(locationallocation)
 ```
 
-Then, run the `demo_data_load()` function to load a set of demo datasets to run the package's function. The demo data contains the coordinate-point location of public drinking water fountains in the city of Naples, Italy, as well as a gridded population raster data from GHS-POP, a 100-m resolution map of heat hazard (number of days with Wet-Bulb Globe Temperature greater than 25° C in the historical period 2008-2017, obtained from the UrbClim model), and the administrative boundaries of the city. 
+As an example, We demonstrate how the package can tackle urban-scale climate risk through robust infrastructure assessment and geospatial planning. We run the `demo_data_load()` function to load a set of demo datasets to run the package's function. The demo data contains the coordinate-point location of public drinking water fountains in the city of Naples, Italy, as well as a gridded population raster data from GHS-POP, a 100-m resolution map of heat hazard (number of days with Wet-Bulb Globe Temperature greater than 25° C in the historical period 2008-2017, obtained from the UrbClim model), and the administrative boundaries of the city. 
 
 <p align="center">
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/map_demand_existing_facilities.png?raw=true" alt="" width="600"/>
@@ -58,6 +52,18 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 <p align="center">
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/traveltime_map_fountains.png?raw=true" alt="" width="600"/>
 </p>
+
+We can also produce a summary plot and statistic based on the output of the traveltime function and a given demand (e.g., population) raster, as well as a given time threshold parameter:
+
+``` r
+traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=5)
+```
+
+which will print an output message such as:
+
+``` r
+[1] "38.54 % of demand layer within the objectiveminutes threshold."
+```
 
 We can now  use the `allocation` function to optmise the spatial allocation of new water fountains to ensure that (virtually) everyone (i.e., the totality of the raster layer specified by the `demand_raster` parameter) can walk to one within 15 minutes, as specified by the `objectiveminutes` parameter:
 
@@ -113,4 +119,4 @@ allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boun
 
 ## Disclaimer
 
-This package is developed by a data user. 
+The developer of this package does not hold any responsibility for the results produced by this package.  
