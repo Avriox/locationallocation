@@ -1,10 +1,10 @@
-#' A Cat Function
+#' Demo data for locationallocation
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
-#' @export
-#' @examples
+#' This function loads in the global environment four demo data objects to test the functions of the locationallocation package:
+#' - boundary: a sf polygon geometry object representing the administrative boundary of the city of Naples, Italy
+#' - fountains: a sf point geometry object representing the water fountains in the city of Naples, Italy
+#' - pop: a raster Raster object representing the population density in the city of Naples, Italy
+#' - hotdays: a raster Raster object representing the number of hot days in the city of Naples, Italy
 
 demo_data_load <- function(){
 
