@@ -6,6 +6,7 @@ locationallocation: an R package to solve Maximal Coverage Location-Allocation p
 <img src="https://github.com/giacfalk/locationallocation/blob/main/logo.png?raw=true" alt="" width="300"/>
 </p>
 
+Package developer: Giacomo Falchetta, giacomo.falchetta@cmcc.it
 
 ## Background
 
@@ -118,4 +119,4 @@ allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boun
 
 ## Disclaimer
 
-This package is developed by a data user. 
+The developer of this package does not hold any responsibility for the results produced by this package.  
