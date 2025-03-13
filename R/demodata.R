@@ -5,6 +5,8 @@
 #' - fountains: a sf point geometry object representing the water fountains in the city of Naples, Italy
 #' - pop: a raster Raster object representing the population density in the city of Naples, Italy
 #' - hotdays: a raster Raster object representing the number of hot days in the city of Naples, Italy
+#' @keywords vignette
+#' @export
 
 demo_data_load <- function(){
 

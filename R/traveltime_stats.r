@@ -1,8 +1,11 @@
-#' A Cat Function
+#' Summary of traveltime function results
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function generates a summary of the traveltime function results, producing a cumulative curve plot and a statistic for the fraction of demand which is covered within a given objective travel time.
+#' @param traveltime The output object of the traveltime function.
+#' @param demand_raster The demand raster layer.
+#' @param breaks The breaks (minutes) for the cumulative curve plot.
+#' @param objectiveminutes The objective travel time in minutes to calculate the statistic from.
+#' @keywords reporting
 #' @export
 
 
@@ -27,6 +30,6 @@ traveltime_stats <- function(traveltime, demand_raster, breaks=c(5, 10, 15, 30),
     xlab("travel time")+
     scale_colour_brewer(palette="Reds", direction = 1, name="minutes"))
 
-return(paste0(round((sum(data_curve$values.pop.[data_curve$values.t1.<=objectiveminutes], na.rm=T)/sum(data_curve$values.pop.))*100 ,2), " % within the objectiveminutes threshold."))
+return(paste0(round((sum(data_curve$values.pop.[data_curve$values.t1.<=objectiveminutes], na.rm=T)/sum(data_curve$values.pop.))*100 ,2), " % of demand layer within the objectiveminutes threshold."))
 
 }

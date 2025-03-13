@@ -1,10 +1,12 @@
-#' A Cat Function
+#' Quick masking of a Rast object to an sf object
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function rapidly masks a Rast object to an sf object.
+#' @param ras A Rast object.
+#' @param mask A Rast or sf object.
+#' @param inverse Logical. If TRUE, the mask is inverted.
+#' @param updatevalue The value to update the Rast object with.
+#' @keywords masking
 #' @export
-#' @examples
 
 mask_raster_to_polygon <- function(ras = NULL, mask = NULL, inverse = FALSE, updatevalue = NA) {
 

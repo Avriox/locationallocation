@@ -1,10 +1,10 @@
-#' A Cat Function
+#' Plot results of the allocation and allocation_discrete functions
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function is used to plot the results of the allocation and allocation_discrete functions. It shows the potential locations for new facilities and the coverage attained.
+#' @param output_allocation The output of the allocation or allocation_discrete functions.
+#' @param bb_area A boundary box object with the area of interest.
+#' @keywords reporting
 #' @export
-#' @examples
 
 allocation_plot <- function(output_allocation, bb_area){
 
@@ -18,13 +18,6 @@ allocation_plot <- function(output_allocation, bb_area){
     ggtitle("Potential locations for new facilities")
 }
 
-#' A Cat Function
-#'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
-#' @export
-#' @examples
 
 allocation_plot_discrete <- function(output_allocation, bb_area){
 

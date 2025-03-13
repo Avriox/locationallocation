@@ -1,10 +1,12 @@
-#' A Cat Function
+#' Download and optionally downscale the friction surface layer to conduct location-allocation analysis.
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
+#' This function retrieves the friction surface layer from the Malaria Atlas Project database and optionally downscales it to the spatial resolution of the analysis using road network data from OpenStreetMap. The function returns the friction surface layer, the transition matrix, and the geocorrection matrix.
+#' @param bb_area A spatial object representing the area of interest.
+#' @param mode The mode of transport. Options are "fastest" and "walk".
+#' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
+#' @param dowscaling_model_type The type of model used for the spatial downscaling of the friction layer. Options are "lm" (linear model) and "rf" (random forest).
 #' @keywords cats
 #' @export
-#' @examples
 
 friction <- function(bb_area, mode, res_output, dowscaling_model_type){
 

@@ -1,10 +1,11 @@
-#' A Cat Function
+#' Plot results of the traveltime function
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function is used to plot the results of the traveltime function. It shows the travel time from the facilities to the area of interest.
+#' @param traveltime The output of the traveltime function.
+#' @param bb_area A boundary box object with the area of interest.
+#' @param facilities A sf object with the existing facilities.
+#' @keywords reporting
 #' @export
-#' @examples
 
 traveltime_plot <- function(traveltime, bb_area, facilities=NULL){
 

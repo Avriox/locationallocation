@@ -1,12 +1,15 @@
-#' A Cat Function
+#' Generate a traveltime map
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
+#' This function generates a traveltime map based on the input facilities, bounding box area, and travel mode.
+#' @param facilities A sf object with the existing facilities.
+#' @param bb_area A boundary box object with the area of interest.
+#' @param dowscaling_model_type The type of model used for the spatial downscaling of the travel time layer.
+#' @param mode The mode of transport.
+#' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
 #' @keywords cats
 #' @export
-#' @examples
 
-traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_output = 100, friction=NULL){
+traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_output = 100){
 
   out <- friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 

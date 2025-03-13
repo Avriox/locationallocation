@@ -1,13 +1,21 @@
-#' A Cat Function
+#' Location allocation (continuous problem)
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function is used to allocate facilities in a continuous location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on the demand, travel time, and weights for the demand, and target travel time threshold and share of the demand to be covered.
+#' @param demand_raster A raster object with the demand for the service.
+#' @param traveltime_raster The output of the traveltime function. If not provided, the function will run the traveltime function first.
+#' @param bb_area A boundary box object with the area of interest.
+#' @param facilities A sf object with the existing facilities.
+#' @param weights A raster with the weights for the demand.
+#' @param objectiveminutes The objective travel time in minutes.
+#' @param objectiveshare The share of the demand to be covered.
+#' @param heur The heuristic approach to be used. Options are "max" (default) and "kd".
+#' @param dowscaling_model_type The type of model used for the spatial downscaling of the travel time layer.
+#' @param mode The mode of transport.
+#' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
+#' @keywords location-allocation
 #' @export
-#' @examples
-#' allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15, objectiveshare=0.01, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
 
-allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.01, heur="max", dowscaling_model_type, mode, res_output){
+allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output){
 
 if(is.null(traveltime_raster)){
 print("Travel time layer not detected. Running traveltime function first.")
@@ -101,7 +109,7 @@ repeat {
 
   print(paste0("Fraction of unmet demand:  ", k*100, " %"))
   # exit if the condition is met
-  if (k<objectiveshare){ break}
+  if (k<(1-objectiveshare)){ break}
   else if ( k == k_save[iter-1] ) {
 
       raster::values(demand_raster)[all] <- NA

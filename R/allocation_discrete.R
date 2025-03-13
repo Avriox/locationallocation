@@ -1,12 +1,22 @@
-#' A Cat Function
+#' Location allocation (discrete problem)
 #'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function is used to allocate facilities in a discrete location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on a user-defined set of locations, objective travel time, and maximum number of allocable facilities. The problem is solved using a statistical heuristic approach that generates samples of the candidate locations (on top of the existing locations) and selects the facilities in the one that minimizes the objective function.
+#' @param demand_raster A raster object with the demand for the service.
+#' @param traveltime_raster The output of the traveltime function. If not provided, the function will run the traveltime function first.
+#' @param bb_area A boundary box object with the area of interest.
+#' @param facilities A sf object with the existing facilities.
+#' @param candidate A sf object with the candidate locations for the new facilities.
+#' @param max_fac The maximum number of facilities that can be allocated.
+#' @param weights A raster with the weights for the demand.
+#' @param objectiveminutes The objective travel time in minutes.
+#' @param dowscaling_model_type The type of model used for the spatial downscaling of the travel time layer.
+#' @param mode The mode of transport.
+#' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
+#' @param n_samples The number of samples to generate in the heuristic approach for identifying the best set of facilities to be allocated.
+#' @keywords location-allocation
 #' @export
-#' @examples
 
-allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, heur="max", dowscaling_model_type, mode, res_output, n_samples){
+allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples){
 
   if(is.null(traveltime_raster) & !is.null(facilities)){
     print("Travel time layer not detected. Running traveltime function first.")
@@ -16,7 +26,15 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
 
     out <- friction(bb_area=bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 
-  } else if(!is.null(traveltime_raster) & is.null(facilities)) {break}
+  } else if(!is.null(traveltime_raster)){
+
+
+    traveltime_raster_outer <- traveltime_raster
+
+  }
+
+
+  else if(!is.null(traveltime_raster) & is.null(facilities)) {break}
 
 
   ###############
@@ -121,6 +139,8 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
   traveltime_raster_new_min <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
+
+  traveltime_raster_new_min <- raster::stackApply(raster::stack(traveltime_raster_new_min, traveltime_raster_outer[[1]]), 1, "min", na.rm = TRUE)
 
   demand_raster <- raster::overlay(demand_raster, traveltime_raster_new_min, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
