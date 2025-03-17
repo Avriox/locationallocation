@@ -13,8 +13,7 @@ setwd("C:/Users/Utente/OneDrive - IIASA/Current papers/cooling_centers_allocatio
 #   comment = c(ORCID = "0000-0003-2607-2195")
 # )
 # usethis::use_citation()
-
-usethis::use_github_action("pkgdown")
+# usethis::use_github_action("pkgdown")
 
 pkgdown::build_site()
 

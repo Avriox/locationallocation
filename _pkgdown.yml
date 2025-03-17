@@ -1,8 +1,8 @@
-url: ~
-template:
-  bootstrap: 5
-
 url: https://giacfalk.github.io/locationallocation
+
 template:
   bootstrap: 5
   bootswatch: flatly
+
+home:
+  title: "locationallocation R package website"
