@@ -1,8 +1,28 @@
 
+library(devtools)
+
 setwd("C:/Users/Utente/OneDrive - IIASA/Current papers/cooling_centers_allocation/locationallocation/")
 
-library(devtools)
+# usethis::use_pkgdown()
+# usethis::use_gpl3_license()
+# usethis::use_author(
+#   given = "Giacomo",
+#   family = "Falchetta",
+#   role = c("aut", "cre"),
+#   email = "giacomo.falchetta@cmcc.it",
+#   comment = c(ORCID = "0000-0003-2607-2195")
+# )
+# usethis::use_citation()
+
+usethis::use_github_action("pkgdown")
+
+pkgdown::build_site()
+
+##
+
 devtools::document()
+
+###
 
 demo_data_load()
 
