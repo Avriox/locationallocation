@@ -42,7 +42,7 @@ AAA
 ```{r}
 candidates <- st_sample(boundary, 30)
 
-output_allocation_discrete <- allocation_discrete(demand_raster = pop, sf_area = boundary, facilities=fountains, candidate=candidates, max_fac = 10, traveltime=out_tt, weights=NULL, objectiveminutes=15)
+output_allocation_discrete <- allocation_discrete(demand_raster = pop, sf_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, traveltime=out_tt, weights=NULL, objectiveminutes=15)
 
 allocation_plot_discrete(output_allocation_discrete)
 

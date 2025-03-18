@@ -6,7 +6,7 @@
 #' @param bb_area A boundary box object with the area of interest.
 #' @param facilities A sf object with the existing facilities.
 #' @param candidate A sf object with the candidate locations for the new facilities.
-#' @param max_fac The maximum number of facilities that can be allocated.
+#' @param n_fac The number of facilities that can be allocated.
 #' @param weights A raster with the weights for the demand.
 #' @param objectiveminutes The objective travel time in minutes.
 #' @param dowscaling_model_type The type of model used for the spatial downscaling of the travel time layer.
@@ -16,7 +16,7 @@
 #' @keywords location-allocation
 #' @export
 
-allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, max_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples){
+allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par){
 
   if(is.null(traveltime_raster) & !is.null(facilities)){
     print("Travel time layer not detected. Running traveltime function first.")
@@ -71,7 +71,7 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
 
   #######
 
-  samples <- replicate(n_samples, sample(1:length(candidate), max_fac, replace = F))
+  samples <- replicate(n_samples, sample(1:length(candidate), n_fac, replace = T))
 
   ########
 
@@ -112,7 +112,28 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
 
   }
 
+
   outer <- pbapply::pblapply(1:n_samples, runner)
+
+  # outer <- function(n_samples, runner, paral=par, n_cores = parallel::detectCores() - 1) {
+  #   if (paral==T) {
+  #     # Determine OS
+  #     if (.Platform$OS.type == "unix") {
+  #       # Use mclapply for Unix-based systems
+  #       result <- parallel::mclapply(1:n_samples, runner, mc.cores = n_cores)
+  #     } else {
+  #       # Use parLapply for Windows
+  #       cl <- parallel::makeCluster(n_cores)
+  #       result <- parallel::parLapply(cl, 1:n_samples, runner)
+  #       parallel::stopCluster(cl)  # Clean up cluster
+  #     }
+  #   } else {
+  #     # Fallback to standard lapply
+  #     result <- pbapply::pblapply(1:n_samples, runner)
+  #   }
+  #
+  #   return(result)
+  # }
 
   ######
 
@@ -139,8 +160,6 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
   traveltime_raster_new_min <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
-
-  traveltime_raster_new_min <- raster::stackApply(raster::stack(traveltime_raster_new_min, traveltime_raster_outer[[1]]), 1, "min", na.rm = TRUE)
 
   demand_raster <- raster::overlay(demand_raster, traveltime_raster_new_min, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA

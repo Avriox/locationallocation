@@ -10,7 +10,7 @@ allocation_discrete(
   bb_area,
   facilities = NULL,
   candidate,
-  max_fac = Inf,
+  n_fac = Inf,
   weights = NULL,
   objectiveminutes = 10,
   dowscaling_model_type,
@@ -30,7 +30,7 @@ allocation_discrete(
 
 \item{candidate}{A sf object with the candidate locations for the new facilities.}
 
-\item{max_fac}{The maximum number of facilities that can be allocated.}
+\item{n_fac}{The number of facilities that can be allocated.}
 
 \item{weights}{A raster with the weights for the demand.}
 

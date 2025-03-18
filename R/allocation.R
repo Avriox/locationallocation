@@ -118,6 +118,8 @@ repeat {
 
 outer <- list(merged_facilities[-c(1:nrow(facilities)),], traveltime_raster_new)
 
+print(paste0(nrow(as.data.frame(new_facilities)), " facilities added to attain coverage of ", objectiveshare*100, "% of the demand within ", objectiveminutes, " minutes."))
+
 return(outer)
 
 }

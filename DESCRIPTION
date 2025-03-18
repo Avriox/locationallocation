@@ -23,4 +23,5 @@ Imports:
 	tidyverse,
 	osmdata,
 	spatialEco,
-	pbapply
+	pbapply,
+	parallel

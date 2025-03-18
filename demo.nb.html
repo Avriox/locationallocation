@@ -1848,7 +1848,7 @@ allocation_plot(output_allocation)
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FuZGlkYXRlcyA8LSBzdF9zYW1wbGUoYm91bmRhcnksIDMwKVxuXG5vdXRwdXRfYWxsb2NhdGlvbl9kaXNjcmV0ZSA8LSBhbGxvY2F0aW9uX2Rpc2NyZXRlKGRlbWFuZF9yYXN0ZXIgPSBwb3AsIHNmX2FyZWEgPSBib3VuZGFyeSwgZmFjaWxpdGllcz1mb3VudGFpbnMsIGNhbmRpZGF0ZT1jYW5kaWRhdGVzLCBtYXhfZmFjID0gMTAsIHRyYXZlbHRpbWU9b3V0X3R0LCB3ZWlnaHRzPU5VTEwsIG9iamVjdGl2ZW1pbnV0ZXM9MTUpXG5cbmFsbG9jYXRpb25fcGxvdF9kaXNjcmV0ZShvdXRwdXRfYWxsb2NhdGlvbl9kaXNjcmV0ZSlcblxuYGBgIn0= -->
 <pre class="r"><code>candidates &lt;- st_sample(boundary, 30)
 
-output_allocation_discrete &lt;- allocation_discrete(demand_raster = pop, sf_area = boundary, facilities=fountains, candidate=candidates, max_fac = 10, traveltime=out_tt, weights=NULL, objectiveminutes=15)
+output_allocation_discrete &lt;- allocation_discrete(demand_raster = pop, sf_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, traveltime=out_tt, weights=NULL, objectiveminutes=15)
 
 allocation_plot_discrete(output_allocation_discrete)
 </code></pre>
