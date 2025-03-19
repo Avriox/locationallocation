@@ -10,9 +10,13 @@ Package developer: Giacomo Falchetta, giacomo.falchetta@cmcc.it
 
 ## Background
 
-Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective. Such infrastructure can relate to many domains that are pertinent to climate risk reduction, including public health, public services provision, and logistics. This class of problems is generally defined as "Maximal Coverage Location-Allocation (MCLA)" spatial optimisation problems.
+Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective. This class of problems is generally defined as "Maximal Coverage Location-Allocation (MCLA)" spatial optimisation problems.
 
 locationallocation, an R package to solve MCLA problems using geospatial data in widely used R programming language geospatial libraries. The locationallocation package allows to produce travel time maps and spatially optimise the allocation of facilities/infrastructure based on spatial accessibility criteria weighted by one or more variables or a function of those. 
+
+## Potential applications
+
+Potential applications of the package extend to the domains of public infrastructure assessment and planning (public services provision, e.g. transport, social services, healthcare, parks), urban environmental and climate risk reduction interventions, logistics and hubs allocation, commercial and strategic decisions.
 
 ## Installation
 
