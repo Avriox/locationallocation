@@ -123,4 +123,4 @@ allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boun
 
 ## Disclaimer
 
-The developer of this package does not hold any responsibility for the results produced by this package.  
+This package is developed by an R user without a professional supervision or a testing environment or protocol. As such, the developer does not hold any responsibility for the results produced by this package.  
