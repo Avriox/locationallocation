@@ -79,11 +79,13 @@ We can also produce a summary plot and statistic based on the output of the trav
 traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=5)
 ```
 
-which will print an output message such as:
+which will print a summary cumulative curve plot and an output message such as:
 
 ``` r
 [1] "38.54 % of demand layer within the objectiveminutes threshold."
 ```
+
+
 
 We can now  use the `allocation` function to optmise the spatial allocation of new water fountains to ensure that (virtually) everyone (i.e., the totality of the raster layer specified by the `demand_raster` parameter) can walk to one within 15 minutes, as specified by the `objectiveminutes` parameter:
 
