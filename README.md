@@ -1,4 +1,4 @@
-# locationallocation
+# locationallocation (alpha version)
  
 locationallocation: an R package to solve Maximal Coverage Location-Allocation problems using geospatial data
 
