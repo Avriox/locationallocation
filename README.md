@@ -8,6 +8,22 @@ locationallocation: an R package to solve Maximal Coverage Location-Allocation p
 
 Package developer: Giacomo Falchetta, giacomo.falchetta@cmcc.it
 
+- Documentation and vignette website: https://giacfalk.github.io/locationallocation
+
+- Reference manuscript: https://doi.org/10.31223/X5XQ69
+
+``` r
+@article{Falchetta2025,
+  title = {locationallocation: solving Maximal Coverage Location-Allocation geospatial infrastructure assessment and planning problems},
+  url = {http://dx.doi.org/10.31223/X5XQ69},
+  DOI = {10.31223/x5xq69},
+  publisher = {EarthArXiv},
+  author = {Falchetta,  Giacomo},
+  year = {2025},
+  month = mar 
+}
+```
+
 ## Background
 
 Assessing and planning infrastructure and networks over space conditional to a spatially distributed demand and with consideration of accessibility and spatial justice goals and under infrastructure allocation constraints is a key policy objective. This class of problems is generally defined as "Maximal Coverage Location-Allocation (MCLA)" spatial optimisation problems.
