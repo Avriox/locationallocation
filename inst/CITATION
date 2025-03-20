@@ -1,8 +1,8 @@
 bibentry(
   bibtype  = "Article",
-  title    = "locationallocation: solving Maximal Coverage Location-Allocation geospatial infrastructure assessment and planning problems for urban-scale climate risk adaptation",
-  author   = "Giacomo Falchetta",
-  journal  = "Preprint",
+  title    = "locationallocation: solving Maximal Coverage Location-Allocation geospatial infrastructure assessment and planning problems",
+  author   = "Falchetta, Giacomo",
+  journal  = "Preprint, EarthArXiv",
   year     = "2025",
-  doi      = ""
+  doi      = "http://dx.doi.org/10.31223/X5XQ69",
 )
