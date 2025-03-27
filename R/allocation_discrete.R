@@ -24,8 +24,8 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
   }
 
   # Check traveltime is an output object from the traveltime function
-  if (!is.null(traveltime_raster) & (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3)) {
-    stop("Error: 'traveltime' must be an output object from the locationallocation::traveltime function.")
+  if (!is.null(traveltime_raster) & (!inherits(traveltime_raster, "list") || length(traveltime_raster) != 2 || !inherits(traveltime_raster[[1]], "RasterLayer") || !inherits(traveltime_raster[[2]], "list") || length(traveltime_raster[[2]]) != 3)) {
+    stop("Error: 'traveltime_raster' must be an output object from the locationallocation::traveltime function.")
   }
 
   # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
@@ -39,7 +39,7 @@ if (!is.null(facilities) & (!inherits(facilities, "sf") || nrow(facilities) == 0
 }
 
 # Check candidates is a non-empty data frame
-if (!inherits(candidate, "sf") || nrow(candidate) == 0) {
+if ((!inherits(candidate, "sf") & !inherits(candidate, "sfc")) || length(candidate) == 0) {
   stop("Error: 'candidate' must be a non-empty sf point geometry data frame.")
 }
 
@@ -56,12 +56,6 @@ if (!is.null(weights) && !inherits(weights, "RasterLayer")) {
 # Check objectiveminutes is a numeric value
 if (!is.numeric(objectiveminutes) || length(objectiveminutes) != 1) {
   stop("Error: 'objectiveminutes' must be a numeric value.")
-}
-
-# Check heur is a character string and one of the allowed values
-allowed_heur <- c("max", "kd")
-if (!is.character(heur) || length(heur) != 1 || !(heur %in% allowed_heur)) {
-  stop(paste("Error: 'heur' must be one of", paste(allowed_heur, collapse = ", "), "."))
 }
 
 # Check dowscaling_model_type is a non-empty character string

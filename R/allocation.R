@@ -23,8 +23,8 @@ allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilitie
   }
 
   # Check traveltime is an output object from the traveltime function
-  if (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3) {
-    stop("Error: 'traveltime' must be an output object from the locationallocation::traveltime function.")
+  if (!inherits(traveltime_raster, "list") || length(traveltime_raster) != 2 || !inherits(traveltime_raster[[1]], "RasterLayer") || !inherits(traveltime_raster[[2]], "list") || length(traveltime_raster[[2]]) != 3) {
+    stop("Error: 'traveltime_raster' must be an output object from the locationallocation::traveltime function.")
   }
 
   # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
