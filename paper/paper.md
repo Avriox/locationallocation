@@ -25,7 +25,6 @@ header-includes:
  - \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
  - \usepackage{color}
  - \usepackage{bm}
- - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 output: rticles::joss_article
 csl: apa.csl
 journal: JOSS
@@ -192,24 +191,24 @@ Greedy Heuristic are used to identify quasi-optimal solution without
 resorting to resource and time-intensive constrained optimization
 approaches such as Mixed-Integer Programming (MIP):\
 
-:::: algorithm
-::: algorithmic
-Set of candidate facility locations $I$, set of demand points $J$,
+***
+Require: Set of candidate facility locations $I$, set of demand points $J$,
 travel-time matrix $d_{ij}$, population weights $w_j$, number of
-facilities $P$, coverage threshold $T$. A set $S$ of selected facility
-locations.
-
-Initialize $S \gets \emptyset$ Initialize $J_{\text{unmet}} \gets J$
-
-Find the facility $i^*$ that maximizes covered demand:
+facilities $P$, coverage threshold $T$. 
+***
+Ensure: A set $S$ of selected facility locations.
+***
+1: Initialize $S \gets \emptyset$ 
+2: Initialize $J_{\text{unmet}} \gets J$
+3: for k = 1 to P* \in P do
+4: Find the facility $i^*$ that maximizes covered demand:
 $$i^* = \arg\max_{i \in I \setminus S} \sum_{j \in J_{\text{unmet}}} w_j \mathbb{1}(d_{ij} \leq T)$$
-Add $i^*$ to the selected facilities: $S \gets S \cup \{ i^* \}$ Update
-covered demand points:
+5: Add $i^*$ to the selected facilities: $S \gets S \cup \{ i^* \}$ 
+6: Update covered demand points:
 $$J_{\text{unmet}} \gets J_{\text{unmet}} \setminus \{ j \mid d_{i^* j} \leq T \}$$
-
-$S$
-:::
-::::
+7: end for
+8: return S
+***
 
 In the heuristics, to choose the location of the next facility
 allocation, two approaches are implemented:
@@ -404,7 +403,7 @@ they become available in the R global environment by calling the
 *demo_data_load* function.
 
 ![Map of population density and location of public drinking water
-fountains in Naples, Italy.](fig/maps_Napoli.pdf){#fig:maps_naples}
+fountains in Naples, Italy.](outputs/maps_Napoli.pdf){#fig:maps_naples}
 
 Then, we implement the *traveltime* function to calculate a map of
 accessibility to public drinking water sources as follows:
@@ -427,7 +426,7 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 
 ![Map of the walking travel time to the nearest public drinking water
 fountain in Naples,
-Italy.](fig/traveltime_map_fountains.png){#fig:enter-label}
+Italy.](outputs/traveltime_map_fountains.png){#fig:enter-label}
 
 We can also produce a summary plot and statistic based on the output of
 the $traveltime$ function and a given demand (e.g., population) raster,
@@ -468,7 +467,7 @@ updated travel time map:
 ![Map of the continuous location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](fig/allocation_15mins_fountains.png){#fig:sol_cont}
+Italy.](outputs/allocation_15mins_fountains.png){#fig:sol_cont}
 
 If we use demand weights (e.g. maximum temperature), we can use:
 
@@ -490,7 +489,7 @@ such weighted approach:
 for a 15-minute walk, a 99% demand coverage objective, and a demand
 weight based on the frequency of hot days for the nearest public
 drinking water fountain in Naples,
-Italy.](fig/allocation_15mins_fountains_weighted.png){#fig:sol_cont_weighted}
+Italy.](outputs/allocation_15mins_fountains_weighted.png){#fig:sol_cont_weighted}
 
 Otherwise, if we want to prioritize among a discrete set of pre-defined
 potential sites (e.g. sites along the water pipes network), we can use:
@@ -515,7 +514,7 @@ rate attained:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](fig/allocation_discrete_fountains.png){#fig:sol_disc}
+Italy.](outputs/allocation_discrete_fountains.png){#fig:sol_disc}
 
 Note that it is also possible to solve location-allocation problems from
 scratch, i.e. in the absence of pre-existing facilities:
@@ -541,7 +540,7 @@ time layer is computed from scratch, rather than updated:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective and in a case of
 absence of pre-existing facilities in Naples,
-Italy.](fig/allocation_discrete_fromscratch_fountains.png){#fig:sol_disc}
+Italy.](outputs/allocation_discrete_fromscratch_fountains.png){#fig:sol_disc}
 
 # Discussion and conclusion {#discussion-and-conclusion .unnumbered}
 
