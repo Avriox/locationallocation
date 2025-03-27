@@ -17,6 +17,7 @@ affiliations:
    index: 1
  - name: International Institute for Applied Systems Analysis, Laxenburg, Austria
    index: 2
+repository: https://github.com/giacfalk/locationallocation 
 date: 24 March 2025
 bibliography: paper.bib
 ---
@@ -32,6 +33,7 @@ This is particularly crucial in cities because the world is keeping on
 urbanizing (the size and share of global population classified as living
 in urban areas has overtaken the rural population since 2007 and it
 projected to increase to 68% by 2050 [@urbanization2018revision]).\
+
 In facility allocation problems, one of the most critical considerations
 is maximizing the coverage of demand points with a limited number of
 facilities. The Maximal Coverage Location-Allocation (MCLA) seeks to
@@ -41,6 +43,7 @@ threshold. @Church1974 provided the first mathematical formulation of
 the Maximal Covering Location Problem (MCLP) to determine the best
 locations for facilities to maximize the coverage of demand within a
 given distance or time constraint.\
+
 Some of the primary reasons why MCLA problems are important include: (i)
 efficient resource utilization, e.g. in the case of organizations
 operating with limited resources, such as emergency response units,
@@ -61,6 +64,7 @@ planning governments and city planners use MCLA models to determine the
 best locations for schools, hospitals, and transportation hubs. Properly
 placed infrastructure ensures equitable access to essential services,
 reducing disparities in service distribution.\
+
 Recent work, such as @Bonnet2015, demonstrated an implementation of the
 MCLA framework with the use of geospatial data for optimally locating
 automated external defibrillators (AEDs) in cities to improve emergency
@@ -77,6 +81,7 @@ suitable to calculate descriptive snapshots and maps, the *maxcovr*
 [@maxcovrbib] package (<https://github.com/njtierney/maxcovr>), which
 however is not implemented in a way to be integrated with R's geospatial
 data processing capabilities.\
+
 The *locationallocation* R package allows spatially optimizing the
 allocation of facilities and infrastructure based on spatial
 accessibility criteria weighted by one or more variables or a function
@@ -84,6 +89,7 @@ of those. In *locationallocation*, such maximization can be modified to
 e.g. minimize risk (exposure of the population times environmental
 hazard), even considering population-specific vulnerability (age, health
 status, other geographical features).\
+
 Here, I introduce a concise mathematical formulation of the MCLP problem
 and of its solution algorithm; then, I discuss the software and data
 implementation that underlie the *locationallocation* R package. I then
@@ -107,6 +113,7 @@ layers used to compute the travel time by different means of transport,
 as well as on the *gdistance* package [@gdistancepackage] to compute
 transition matrices and run cumulative cost algorithms to compute travel
 time maps.\
+
 *locationallocation* is designed to be used in the domains of public
 infrastructure assessment and planning (public services provision, e.g.
 transport, social services, healthcare, parks), urban environmental and
@@ -197,9 +204,6 @@ $$i^* = \arg\max_{i \in I \setminus S} \sum_{j \in J_{\text{unmet}}} w_j \mathbb
 $$J_{\text{unmet}} \gets J_{\text{unmet}} \setminus \{ j \mid d_{i^* j} \leq T \}$$
 7: end for \
 8: return S \
-***
-
-\
 
 In the heuristics, to choose the location of the next facility
 allocation, two approaches are implemented:
@@ -375,11 +379,13 @@ for acting to reduce the adversity and inequity of climate change
 impacts. Such knowledge can be used to inform the design and
 transformation of urban areas into more climate-resilient, just,
 sustainable living systems.\
+
 As a use case, we evaluate accessibility and optimize accessibility
 goals to public drinking water fountains in the city of Naples, Italy
 with consideration of exposure (population density) and hazard (average
 number of days per year with a local Wet-Bulb Globe Temperature \> 25°
 C).\
+
 First, we obtain water fountain coordinate location for city from the
 Open Street Maps API using the *osmdata* package using the query
 *$amenity = drinking\_water$*. We also obtain gridded population data at
@@ -394,7 +400,7 @@ they become available in the R global environment by calling the
 *demo_data_load* function.
 
 ![Map of population density and location of public drinking water
-fountains in Naples, Italy.](figures_paper/maps_Napoli.pdf){#fig:maps_naples}
+fountains in Naples, Italy.\label{#fig:maps_naples}](figures_paper/maps_Napoli.pdf)
 
 Then, we implement the *traveltime* function to calculate a map of
 accessibility to public drinking water sources as follows:
@@ -417,7 +423,7 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 
 ![Map of the walking travel time to the nearest public drinking water
 fountain in Naples,
-Italy.](figures_paper/traveltime_map_fountains.png){#fig:enter-label}
+Italy.\label{#fig:enter-label}](figures_paper/traveltime_map_fountains.png)
 
 We can also produce a summary plot and statistic based on the output of
 the $traveltime$ function and a given demand (e.g., population) raster,
@@ -458,7 +464,7 @@ updated travel time map:
 ![Map of the continuous location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](figures_paper/allocation_15mins_fountains.png){#fig:sol_cont}
+Italy.\label{#fig:sol_cont}](figures_paper/allocation_15mins_fountains.png)
 
 If we use demand weights (e.g. maximum temperature), we can use:
 
@@ -480,7 +486,7 @@ such weighted approach:
 for a 15-minute walk, a 99% demand coverage objective, and a demand
 weight based on the frequency of hot days for the nearest public
 drinking water fountain in Naples,
-Italy.](figures_paper/allocation_15mins_fountains_weighted.png){#fig:sol_cont_weighted}
+Italy.\label{#fig:sol_cont_weighted}](figures_paper/allocation_15mins_fountains_weighted.png)
 
 Otherwise, if we want to prioritize among a discrete set of pre-defined
 potential sites (e.g. sites along the water pipes network), we can use:
@@ -505,7 +511,7 @@ rate attained:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](figures_paper/allocation_discrete_fountains.png){#fig:sol_disc}
+Italy.\label{#fig:sol_disc}](figures_paper/allocation_discrete_fountains.png)
 
 Note that it is also possible to solve location-allocation problems from
 scratch, i.e. in the absence of pre-existing facilities:
@@ -531,7 +537,7 @@ time layer is computed from scratch, rather than updated:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective and in a case of
 absence of pre-existing facilities in Naples,
-Italy.](figures_paper/allocation_discrete_fromscratch_fountains.png){#fig:sol_disc}
+Italy.\label{#fig:sol_disc}](figures_paper/allocation_discrete_fromscratch_fountains.png)
 
 # Discussion and conclusion {#discussion-and-conclusion .unnumbered}
 
@@ -546,6 +552,7 @@ protection infrastructure. Beyond, other domains of application include
 public infrastructure assessment and planning (public services
 provision, e.g. transport, social services, healthcare, parks),
 logistics and hubs allocation, commercial and strategic decisions.\
+
 Despite the advancements brought by *locationallocation* in its capacity
 to bridge the mathematical formulation of the MCLA problem with the
 application with geospatial data and libraries in the R scientific
