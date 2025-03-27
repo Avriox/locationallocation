@@ -25,49 +25,6 @@ bibliography: paper.bib
 # Summary
 
 Assessing and planning infrastructure and networks over space
-conditional to a spatially distributed demand and with consideration
-of accessibility and spatial justice goals and under infrastructure
-allocation constraints is a key policy objective. Potential
-applications extend to the domains of public infrastructure assessment
-and planning (public services provision, e.g. transport, social
-services, healthcare, parks), urban environmental and climate risk
-reduction interventions, logistics and hubs allocation, commercial and
-strategic decisions. Here we introduce *locationallocation*, an R
-package to solve Maximal Coverage Location-Allocation problems using
-geospatial data in widely used R programming language geospatial
-libraries. The package allows to produce travel time maps and
-spatially optimizing the allocation of facilities in both continuous
-and discrete choice problems and based on spatial accessibility
-criteria weighted by one or more variables or a function of those. We
-demonstrate the use of package through an example of how it can be
-used to plan infrastructures that can tackle urban-scale climate risk
-through infrastructure assessment and spatial planning.
-
-# Statement of need
-
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
-
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike.
-
-# Introduction
-
-Assessing and planning infrastructure and networks over space
 conditional to a spatially distributed demand and with consideration of
 accessibility and spatial justice goals and under infrastructure
 allocation constraints is a key policy objective
@@ -76,7 +33,7 @@ This is particularly crucial in cities because the world is keeping on
 urbanizing (the size and share of global population classified as living
 in urban areas has overtaken the rural population since 2007 and it
 projected to increase to 68% by 2050 [@urbanization2018revision]).\
-In facility location problems, one of the most critical considerations
+In facility allocation problems, one of the most critical considerations
 is maximizing the coverage of demand points with a limited number of
 facilities. The Maximal Coverage Location-Allocation (MCLA) seeks to
 determine the best locations for facilities to serve the highest
@@ -86,21 +43,22 @@ the Maximal Covering Location Problem (MCLP) to determine the best
 locations for facilities to maximize the coverage of demand within a
 given distance or time constraint.\
 Some of the primary reasons why MCLA problems are important include: (i)
-Efficient Resource Utilization: Many organizations operate with limited
-resources, such as emergency response units, public health clinics, or
-distribution centers. The MCLA problem helps optimize the placement of
-these resources to maximize service coverage, ensuring that the highest
-number of people benefit from the available facilities; (ii) Emergency
-Response and Public Safety: In scenarios where response time is crucial,
+efficient resource utilization, e.g. in the case of organizations
+operating with limited resources, such as emergency response units,
+public health clinics, or distribution centers. Here, solving the MCLA
+problem helps optimize the placement of these resources to maximize
+service coverage, ensuring that the highest number of people benefit
+from the available facilities; (ii) another use case is emergency
+response and public safety: in scenarios where response time is crucial,
 such as ambulance or fire station placement, solving the MCLA problem
-can directly impact lives. By strategically locating these facilities,
+can directly impact lives. By strategically locating facilities,
 authorities can reduce response times and improve emergency
-preparedness; (iii) Retail and Service Industry Optimization: Businesses
-often seek to maximize their customer base while minimizing costs.
-Retail chains, fast-food franchises, and service providers can use MCLA
-models to identify optimal store locations, improving accessibility for
-the largest number of potential customers; (iv) infrastructure and Urban
-Planning: Governments and city planners use MCLA models to determine the
+preparedness; (iii) also in retail and service industry optimization,
+solving the MCLA is key for businesses to maximize their customer base
+while minimizing costs, for instance by identifying optimal store
+locations, improving accessibility for the largest number of potential
+customers; (iv) finally, in the domain of infrastructure and urban
+planning governments and city planners use MCLA models to determine the
 best locations for schools, hospitals, and transportation hubs. Properly
 placed infrastructure ensures equitable access to essential services,
 reducing disparities in service distribution.\
@@ -112,42 +70,59 @@ response times and cardiac arrest survival rates. Other studies, such as
 in this paper is building - demonstrated solutions to the MCLA for
 healthcare facilities accessibility, a challenge which was already
 explored (although mostly in a descriptive rather than planning-oriented
-lens, by @weiss2020global). Their framework is implemented with
-spatially-explicit data on factors such as population density,
-historical cardiac arrest data, and accessibility constraints. However,
-irrespective of such previous work implementing the domains of data
-science and the solution to problem such as MCLA (see the review of
-@chen2021open), existing open-source implementations in R are limited to
-*traveltime* [@Ryan2025], which is suitable to calculate descriptive
-snapshots and maps, the *maxcovr* [@maxcovrbib] package
-(<https://github.com/njtierney/maxcovr>) which however is not
-implemented in a way to be integrated with R's geospatial data
-processing capabilities.\
-In this paper, I introduce the *locationallocation* R package, which
-allows spatially optimizing the allocation of facilities and
-infrastructure based on spatial accessibility criteria weighted by one
-or more variables or a function of those. In *locationallocation*, such
-maximization can be modified to e.g. minimize risk (exposure of the
-population times environmental hazard), even considering
-population-specific vulnerability (age, health status, other
-geographical features). I demonstrate the package with a use case on how
-to tackle urban-scale climate risk through infrastructure assessment and
-spatial planning.\
-The remainder of the paper is structured as follows: in Section 2 we
-provide a concise mathematical formulation of the MCLP problem and of
-its solution algorithm; then we discuss the software and data
-implementation that underlie the *locationallocation* R package. In
-Section 3 we present an use of the package based on sample data and
-objectives. We conclude in Section 4 with a commentary on the potential
-use cases of the package, as well as its current limitation and
-potential for future further developments.\
+lens, by @weiss2020global). However, irrespective of such previous work
+implementing the domains of data science and the solution to problem
+such as MCLA (see the review of @chen2021open), existing open-source
+implementations in R are limited to *traveltime* [@Ryan2025], which is
+suitable to calculate descriptive snapshots and maps, the *maxcovr*
+[@maxcovrbib] package (<https://github.com/njtierney/maxcovr>), which
+however is not implemented in a way to be integrated with R's geospatial
+data processing capabilities.\
+The *locationallocation* R package allows spatially optimizing the
+allocation of facilities and infrastructure based on spatial
+accessibility criteria weighted by one or more variables or a function
+of those. In *locationallocation*, such maximization can be modified to
+e.g. minimize risk (exposure of the population times environmental
+hazard), even considering population-specific vulnerability (age, health
+status, other geographical features).\
+Here, I introduce a concise mathematical formulation of the MCLP problem
+and of its solution algorithm; then, I discuss the software and data
+implementation that underlie the *locationallocation* R package. I then
+present an use case of the package on how to tackle urban-scale climate
+risk through infrastructure assessment and spatial planning based on
+sample data and objectives. I conclude with a commentary on the
+potential use cases of the package, as well as its current limitation
+and potential for future further developments.\
 
-# Methods and data
+# Statement of need
+
+*locationallocation* is an R package to solve Maximal Coverage
+Location-Allocation problems using geospatial data leveraging widely
+used R programming language geospatial libraries. The package allows to
+produce travel time maps and spatially optimizing the allocation of
+facilities in both continuous and discrete choice problems and based on
+spatial accessibility criteria weighted by one or more variables or a
+function of those. *locationallocation* relies heavily on the
+*malariaAtlas* package [@malariaAtlaspackage] to obtain the friction
+layers used to compute the travel time by different means of transport,
+as well as on the *gdistance* package [@gdistancepackage] to compute
+transition matrices and run cumulative cost algorithms to compute travel
+time maps.\
+*locationallocation* is designed to be used in the domains of public
+infrastructure assessment and planning (public services provision, e.g.
+transport, social services, healthcare, parks), urban environmental and
+climate risk reduction interventions, logistics and hubs allocation,
+commercial and strategic decisions. The underlying approach has already
+been used in a number of scientific publications [@Falchetta2020], but
+through this package it becomes formally available to the scientific and
+practice communities.
+
+# Methods and data {#methods-and-data .unnumbered}
 
 ## Maximal Coverage Location Problem (MCLP) {#maximal-coverage-location-problem-mclp .unnumbered}
 
 Before introducing the software implementation and the functioning of
-the *locationallocation* package, it is worth providing a concise
+the *locationallocation* R package, it is worth providing a concise
 mathematical formulation of the class of problems addressed by the
 package.\
 **Sets and Indices:**
@@ -248,31 +223,33 @@ facilities.\
 
 The approach includes consideration of different travel modes and can be
 applied to any location in the world. A spatial statistical downscaling
-(\"disseving\") approach for the underlying friction surface data based
-on street network data from Open Street Map API is embedded in the
-package to perform location-allocation spatial optimization at a high
+of \"disseving\" (based on the *dissever* R package [@Roudier2017])
+approach for the underlying friction surface data based on street
+network data from Open Street Map API is embedded in the package to
+perform location-allocation spatial optimization at a high
 spatial-resolution (particularly useful in urban-scale applications). A
 set of reporting functions and graphical outputs are pre-calculated as
-part of the package. The package relies on *malariaAtlas*, *dissever*
-and *gdistance* functions, as well as on *raster*, *terra*, and *sf*
-classes od object.\
+part of the package. The package further relies on *malariaAtlas* and
+*gdistance* functions, as well as on *raster*, *terra*, and *sf* object
+classes.\
 
 - **Friction layers:** Malaria Atlas friction surfaces: walking or
-  fastest mode
+  fastest mode. These datasets provide 1-km resolution global gridded
+  data on the average estimated time to cross a pixel based on the local
+  geography and transport infrastructure [@weiss2020global].
 
 - **Point locations of existing facilities:** A point simple feature
-  geometry ($sf$)
+  geometry object ($sf$).
 
-- **Point locations for candidate facilities:** Optional, point simple
-  feature geometry ($sf$)
+- **Point locations for candidate facilities:** Optional, a point simple
+  feature geometry object ($sf$).
 
 - **Demand weights:** A raster. It can be, for instance, population
-  counts per location (grid cell), optionally in a weighted form by
-  specifying the $weights$ argument to another raster. This would allow
-  using a risk framework where the demand is defined as a risk map $R$
-  of:
-
-  $R = POP \times HAZARD \times VULNERABILITY$
+  counts per location (grid cell) - optionally in a weighted form by
+  specifying the $weights$ argument to another raster of a function of
+  several rasters. This would allow using a risk framework where the
+  demand is defined as a risk map $R$ of:
+  $R = POP \times HAZARD \times VULNERABILITY$.
 
 The package core functions are the following:
 
@@ -285,7 +262,7 @@ The $traveltime$ function generates a travel time map based on the input
 facilities, bounding box area, and travel mode, having the following
 arguments:
 
-- $facilities$: A sf object with the existing facilities.
+- $facilities$: An sf object with the existing facilities.
 
 - $bb\_area$: A boundary box object with the area of interest.
 
@@ -316,7 +293,7 @@ of the demand to be covered, having the following arguments:
 
 - $bb\_area$: A boundary box object with the area of interest.
 
-- $facilities$: A sf object with the existing facilities.
+- $facilities$: An sf object with the existing facilities.
 
 - $weights$: A raster with the weights for the demand.
 
@@ -325,14 +302,14 @@ of the demand to be covered, having the following arguments:
 - $objectiveshare$: The share of the demand to be covered.
 
 - $heur$: The heuristic approach to be used. Options are \"max\"
-  (default) and \"kd\".
+  (default) and \"kd\" (kernel density).
 
 - $dowscaling\_model\_type$: The type of model used for the spatial
   statistical downscaling of the travel time layer.
 
 - $mode$: The mode of transport.
 
-- $res_output$: The spatial resolution of the friction raster (and of
+- $res\_output$: The spatial resolution of the friction raster (and of
   the analysis), in meters. If \<1000, a spatial statistical downscaling
   approach is used.
 
@@ -350,9 +327,9 @@ The $allocation_discrete$ function, having the following arguments:
 
 - $bb\_area$: A boundary box object with the area of interest.
 
-- $facilities$: A sf object with the existing facilities.
+- $facilities$: An sf object with the existing facilities.
 
-- $candidate$: A sf object with the candidate locations for the new
+- $candidate$: An sf object with the candidate locations for the new
   facilities.
 
 - $n\_fac$: The number of facilities that can be allocated.
@@ -379,7 +356,7 @@ $mask\_raster\_to\_polygon()$, $traveltime\_plot()$, and
 $traveltime\_stats()$, and they are documented in the package repository
 and vignette website.
 
-# Use case: optimal allocation of public water fountains with consideration of heat hazard, exposure, and vulnerability
+# Use case: optimal allocation of public water fountains with consideration of heat hazard and exposure {#use-case-optimal-allocation-of-public-water-fountains-with-consideration-of-heat-hazard-and-exposure .unnumbered}
 
 The world is experiencing climate change impacts (climate impacts are
 becoming ever more frequent and severe for both citizens and governments
@@ -393,12 +370,12 @@ transformation of urban areas into more climate-resilient, just,
 sustainable living systems.\
 As a use case, we evaluate accessibility and optimize accessibility
 goals to public drinking water fountains in the city of Naples, Italy
-with consideration of exposure (population density), hazard (average
+with consideration of exposure (population density) and hazard (average
 number of days per year with a local Wet-Bulb Globe Temperature \> 25°
-C, and vulnerability (poverty map).\
+C).\
 First, we obtain water fountain coordinate location for city from the
 Open Street Maps API using the *osmdata* package using the query
-*$amenity = drinking_water$*. We also obtain gridded population data at
+*$amenity = drinking\_water$*. We also obtain gridded population data at
 a 100m spatial resolution from GHS-POP data product [@Florczyk2019], a
 urban microclimate model output for historical Wet-Bulb Globe
 Temperature from the UrbClim model [@Lauwaet2024], and the
@@ -410,7 +387,7 @@ they become available in the R global environment by calling the
 *demo_data_load* function.
 
 ![Map of population density and location of public drinking water
-fountains in Naples, Italy.](outputs/maps_Napoli.pdf){#fig:maps_naples}
+fountains in Naples, Italy.](fig/maps_Napoli.pdf){#fig:maps_naples}
 
 Then, we implement the *traveltime* function to calculate a map of
 accessibility to public drinking water sources as follows:
@@ -432,7 +409,7 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 
 ![Map of the walking travel time to the nearest public drinking water
 fountain in Naples,
-Italy.](outputs/traveltime_map_fountains.png){#fig:enter-label}
+Italy.](fig/traveltime_map_fountains.png){#fig:enter-label}
 
 We can also produce a summary plot and statistic based on the output of
 the $traveltime$ function and a given demand (e.g., population) raster,
@@ -445,15 +422,12 @@ traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 3
 
 yielding:
 
-``` {.r language="R"}
+        [1] "38.54 % of demand layer within the objectiveminutes threshold."
 
-[1] "38.54 % of demand layer within the objectiveminutes threshold."
-```
-
-We then can proceed optimize allocation of new water fountains to cover
-maximum fraction of (unweighted) population. Location-allocation can be
-either solved discretely or continuously over space, and either with a
-facility constraint or with a policy goal for demand (population)
+We then can proceed and optimize allocation of new water fountains to
+cover maximum fraction of (unweighted) population. Location-allocation
+can be either solved discretely or continuously over space, and either
+with a facility constraint or with a policy goal for demand (population)
 coverage. For instance, if the goals is to optimise allocation of new
 water fountains to cover maximum fraction of heat-risk weighted
 population (exposure), we can use:
@@ -472,9 +446,9 @@ updated travel time map:
 ![Map of the continuous location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](outputs/allocation_15mins_fountains.png){#fig:sol_cont}
+Italy.](fig/allocation_15mins_fountains.png){#fig:sol_cont}
 
-If we use demadn weights (e.g. maximum temperature), we can use:
+If we use demand weights (e.g. maximum temperature), we can use:
 
 ``` {.r language="R"}
 
@@ -491,7 +465,7 @@ such weighted approach:
 for a 15-minute walk, a 99% demand coverage objective, and a demand
 weight based on the frequency of hot days for the nearest public
 drinking water fountain in Naples,
-Italy.](outputs/allocation_15mins_fountains_weighted.png){#fig:sol_cont_weighted}
+Italy.](fig/allocation_15mins_fountains_weighted.png){#fig:sol_cont_weighted}
 
 Otherwise, if we want to prioritize among a discrete set of pre-defined
 potential sites (e.g. sites along the water pipes network), we can use:
@@ -513,7 +487,7 @@ rate attained:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.](outputs/allocation_discrete_fountains.png){#fig:sol_disc}
+Italy.](fig/allocation_discrete_fountains.png){#fig:sol_disc}
 
 Note that it is also possible to solve location-allocation problems from
 scratch, i.e. in the absence of pre-existing facilities:
@@ -536,9 +510,9 @@ time layer is computed from scratch, rather than updated:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective and in a case of
 absence of pre-existing facilities in Naples,
-Italy.](outputs/allocation_discrete_fromscratch_fountains.png){#fig:sol_disc}
+Italy.](fig/allocation_discrete_fromscratch_fountains.png){#fig:sol_disc}
 
-# Discussion and conclusion
+# Discussion and conclusion {#discussion-and-conclusion .unnumbered}
 
 This paper provides an illustration of the theoretical background, the
 software and data implementation, and the use case for the
@@ -559,7 +533,7 @@ currently, the package does not support facility-level attributes that
 can affect the location allocation or local density or size of the
 facility to be allocated (e.g. supply constraints such as beds per
 hospital or users per facilities), as all facilities are equally
-defined. Moreover, the apporach to establish the location of the next
+defined. Moreover, the approach to establish the location of the next
 facility to be allocated in the lattice space (in the continuous
 allocation problem) or the exact set of facilities optimizing the
 objective (in the discrete allocation problem) is currently based on
@@ -575,14 +549,13 @@ the development of a constrained optimization framework requiring the
 use of computationally intensive professional solvers. Future software
 work might implement such features and expand the package capabilities.\
 
-
 # Acknowledgements
 
 The author gratefully acknowledges the openly available data and
 algorithm resources from malariaAtlas and OpenStreetMap, without which
 the development of this package would not have been possible. The author
 is thankful to Ahmed T. Hammad for the previous joint work in
-@Falchetta2020 which led to the development of this package. THe author
+@Falchetta2020 which led to the development of this package. The author
 is also grateful to his scientific affiliations CMCC and IIASA for their
 continuous support.
 
