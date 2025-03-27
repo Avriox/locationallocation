@@ -10,7 +10,7 @@ Package developer: Giacomo Falchetta, giacomo.falchetta@cmcc.it
 
 - Documentation and vignette website: https://giacfalk.github.io/locationallocation
 
-- Reference manuscript: https://doi.org/10.31223/X5XQ69
+- Reference preprint (under review at a peer-reviewed journal): https://doi.org/10.31223/X5XQ69
 
 ``` r
 @article{Falchetta2025,
