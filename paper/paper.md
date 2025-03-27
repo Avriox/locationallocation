@@ -19,7 +19,18 @@ affiliations:
    index: 2
 date: 24 March 2025
 bibliography: paper.bib
-
+header-includes: 
+ - \usepackage{amssymb}
+ - \newcommand{\R}{\mathbb{R}}
+ - \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+ - \usepackage{color}
+ - \usepackage{bm}
+ - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+output: rticles::joss_article
+csl: apa.csl
+journal: JOSS
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Summary
@@ -113,7 +124,7 @@ infrastructure assessment and planning (public services provision, e.g.
 transport, social services, healthcare, parks), urban environmental and
 climate risk reduction interventions, logistics and hubs allocation,
 commercial and strategic decisions. The underlying approach has already
-been used in a number of scientific publications [@Falchetta2020], but
+been used in a number of scientific publications [@Falchetta2020; @Falchetta2021], but
 through this package it becomes formally available to the scientific and
 practice communities.
 
@@ -277,7 +288,10 @@ arguments:
 
 ``` {.r language="R"}
 
-allocation(demand_raster, traveltime_raster = NULL, bb_area, facilities = facilities, weights = NULL, objectiveminutes = 10, objectiveshare = 0.99, heur = "max", dowscaling_model_type, mode, res_output)
+allocation(demand_raster, traveltime_raster = NULL, bb_area,
+facilities = facilities, weights = NULL,
+objectiveminutes = 10, objectiveshare = 0.99, heur = "max",
+dowscaling_model_type, mode, res_output)
 ```
 
 The $allocation$ function is used to allocate facilities in a continuous
@@ -315,7 +329,10 @@ of the demand to be covered, having the following arguments:
 
 ``` {.r language="R"}
 
-allocation_discrete(demand_raster, traveltime_raster = NULL, bb_area, facilities = NULL, candidate, n_fac = Inf, weights = NULL, objectiveminutes = 10, dowscaling_model_type, mode, res_output, n_samples)
+allocation_discrete(demand_raster, traveltime_raster = NULL, bb_area,
+facilities = NULL, candidate, n_fac = Inf, weights = NULL,
+objectiveminutes = 10, dowscaling_model_type, mode,
+res_output, n_samples)
 ```
 
 The $allocation_discrete$ function, having the following arguments:
@@ -394,7 +411,8 @@ accessibility to public drinking water sources as follows:
 
 ``` {.r language="R"}
 
-out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="walk", res_output=100)
+out_tt <- traveltime(facilities=fountains, bb_area=boundary,
+dowscaling_model_type="lm", mode="walk", res_output=100)
 ```
 
 The function yields a raster output which - for each pixel - shows the
@@ -417,7 +435,8 @@ as well as a given time threshold parameter:
 
 ``` {.r language="R"}
 
-traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=5)
+traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30),
+objectiveminutes=5)
 ```
 
 yielding:
@@ -434,7 +453,10 @@ population (exposure), we can use:
 
 ``` {.r language="R"}
 
-output_allocation <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15, objectiveshare=0.01, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
+output_allocation <- allocation(demand_raster = pop, traveltime_raster=out_tt,
+bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15,
+objectiveshare=0.01, heur="max", dowscaling_model_type="lm",
+mode="walk", res_output=100)
 
 allocation_plot(output_allocation, bb_area = boundary)
 ```
@@ -452,7 +474,10 @@ If we use demand weights (e.g. maximum temperature), we can use:
 
 ``` {.r language="R"}
 
-output_allocation_weighted <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=hotdays, objectiveminutes=15, objectiveshare=0.01, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
+output_allocation_weighted <- allocation(demand_raster = pop, traveltime_raster=out_tt,
+bb_area = boundary, facilities=fountains, weights=hotdays,
+objectiveminutes=15, objectiveshare=0.01, heur="max",
+dowscaling_model_type="lm", mode="walk", res_output=100)
 
 allocation_plot(output_allocation_weighted, bb_area = boundary)
 ```
@@ -474,7 +499,10 @@ potential sites (e.g. sites along the water pipes network), we can use:
 
 candidates <- st_sample(boundary, 30)
 
-output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100)
+output_allocation_discrete <- allocation_discrete(demand_raster = pop,
+traveltime_raster=NULL, bb_area = boundary, facilities=fountains,
+candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15,
+dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100)
 
 allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
 ```
@@ -496,7 +524,10 @@ scratch, i.e. in the absence of pre-existing facilities:
 
 set.seed(333)
 
-output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100)
+output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop,
+traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates,
+n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm",
+mode="walk", res_output=100, n_samples=100)
 
 allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boundary)
 ```
