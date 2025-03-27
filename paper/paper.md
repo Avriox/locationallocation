@@ -1,7 +1,7 @@
 ---
-title: "*locationallocation*: solving Maximal Coverage
-  Location-Allocation geospatial infrastructure assessment and planning
-  problems"
+title: "*locationallocation*: an R package for solving
+  Maximal Coverage Location-Allocation geospatial infrastructure
+  assessment and planning problems"
 tags:
   - R
   - geographic information science
