@@ -394,13 +394,13 @@ urban microclimate model output for historical Wet-Bulb Globe
 Temperature from the UrbClim model [@Lauwaet2024], and the
 administrative boundaries of the city of Naples from the Eurostat's LAU
 database, as depicted in Figure
-[1](#fig:maps_naples){reference-type="ref" reference="fig:maps_naples"}.
+[1](fig:maps_naples){reference-type="ref" reference="fig:maps_naples"}.
 The following example datasets are fully embedded in the package and
 they become available in the R global environment by calling the
 *demo_data_load* function.
 
 ![Map of population density and location of public drinking water
-fountains in Naples, Italy.\label{#fig:maps_naples}](figures_paper/maps_Napoli.pdf)
+fountains in Naples, Italy.\label{fig:maps_naples}](figures_paper/maps_Napoli.pdf)
 
 Then, we implement the *traveltime* function to calculate a map of
 accessibility to public drinking water sources as follows:
@@ -423,7 +423,7 @@ traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
 
 ![Map of the walking travel time to the nearest public drinking water
 fountain in Naples,
-Italy.\label{#fig:enter-label}](figures_paper/traveltime_map_fountains.png)
+Italy.\label{fig:enter-label}](figures_paper/traveltime_map_fountains.png)
 
 We can also produce a summary plot and statistic based on the output of
 the $traveltime$ function and a given demand (e.g., population) raster,
@@ -464,7 +464,7 @@ updated travel time map:
 ![Map of the continuous location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.\label{#fig:sol_cont}](figures_paper/allocation_15mins_fountains.png)
+Italy.\label{fig:sol_cont}](figures_paper/allocation_15mins_fountains.png)
 
 If we use demand weights (e.g. maximum temperature), we can use:
 
@@ -486,7 +486,7 @@ such weighted approach:
 for a 15-minute walk, a 99% demand coverage objective, and a demand
 weight based on the frequency of hot days for the nearest public
 drinking water fountain in Naples,
-Italy.\label{#fig:sol_cont_weighted}](figures_paper/allocation_15mins_fountains_weighted.png)
+Italy.\label{fig:sol_cont_weighted}](figures_paper/allocation_15mins_fountains_weighted.png)
 
 Otherwise, if we want to prioritize among a discrete set of pre-defined
 potential sites (e.g. sites along the water pipes network), we can use:
@@ -511,7 +511,7 @@ rate attained:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective for the nearest
 public drinking water fountain in Naples,
-Italy.\label{#fig:sol_disc}](figures_paper/allocation_discrete_fountains.png)
+Italy.\label{fig:sol_disc}](figures_paper/allocation_discrete_fountains.png)
 
 Note that it is also possible to solve location-allocation problems from
 scratch, i.e. in the absence of pre-existing facilities:
@@ -537,7 +537,7 @@ time layer is computed from scratch, rather than updated:
 ![Map of the discrete location-allocation problem solution for a
 15-minute walk and a 99% demand coverage objective and in a case of
 absence of pre-existing facilities in Naples,
-Italy.\label{#fig:sol_disc}](figures_paper/allocation_discrete_fromscratch_fountains.png)
+Italy.\label{fig:sol_disc}](figures_paper/allocation_discrete_fromscratch_fountains.png)
 
 # Discussion and conclusion {#discussion-and-conclusion .unnumbered}
 
