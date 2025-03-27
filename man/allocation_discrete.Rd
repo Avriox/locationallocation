@@ -16,7 +16,8 @@ allocation_discrete(
   dowscaling_model_type,
   mode,
   res_output,
-  n_samples
+  n_samples,
+  par
 )
 }
 \arguments{

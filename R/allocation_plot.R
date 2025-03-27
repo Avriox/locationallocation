@@ -8,6 +8,17 @@
 
 allocation_plot <- function(output_allocation, bb_area){
 
+  # Check output_allocation is an output object from the allocation or allocation_discrete functions
+  if (!inherits(output_allocation, "list") || length(output_allocation) != 3 || !inherits(output_allocation[[1]], "sf") || !inherits(output_allocation[[2]], "RasterLayer") || !is.numeric(output_allocation[[3]])) {
+    stop("Error: 'output_allocation' must be an output object from the locationallocation::allocation or locationallocation::allocation_discrete functions.")
+  }
+
+  # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
+  if (!inherits(bb_area, "sf") || nrow(bb_area) == 0) {
+    stop("Error: 'bb_area' must be a non-empty sf polygon.")
+  }
+
+
   require(ggplot2)
 
   ggplot2::ggplot()+

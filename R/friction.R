@@ -10,6 +10,28 @@
 
 friction <- function(bb_area, mode, res_output, dowscaling_model_type){
 
+  # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
+  if (!inherits(bb_area, "sf") || nrow(bb_area) == 0) {
+    stop("Error: 'bb_area' must be a non-empty sf polygon.")
+  }
+
+  # Check mode is a character string and one of the allowed values
+  allowed_modes <- c("walk", "fastest")
+  if (!is.character(mode) || length(mode) != 1 || !(mode %in% allowed_modes)) {
+    stop(paste("Error: 'mode' must be one of", paste(allowed_modes, collapse = ", "), "."))
+  }
+
+  # Check res_output is a single positive numeric value
+  if (!is.numeric(res_output) || length(res_output) != 1 || res_output <= 0) {
+    stop("Error: 'res_output' must be a single positive numeric value.")
+  }
+
+  # Check dowscaling_model_type is a non-empty character string
+  allowed_downscaling <- c("lm", "rf")
+  if (!is.character(dowscaling_model_type) || length(dowscaling_model_type) != 1 || !(dowscaling_model_type %in% allowed_downscaling)) {
+    stop("Error: 'dowscaling_model_type' must either be 'lm' or 'rf'.")
+  }
+
 handle <- curl::new_handle(timeout = 120)
 
 if(mode =="fastest"){

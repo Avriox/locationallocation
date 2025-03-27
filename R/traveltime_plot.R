@@ -9,6 +9,21 @@
 
 traveltime_plot <- function(traveltime, bb_area, facilities=NULL){
 
+  # Check traveltime is an output object from the traveltime function
+  if (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3) {
+    stop("Error: 'traveltime' must be an output object from the locationallocation::traveltime function.")
+  }
+
+  # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
+  if (!inherits(bb_area, "sf") || nrow(bb_area) == 0) {
+    stop("Error: 'bb_area' must be a non-empty sf polygon.")
+  }
+
+  # Check facilities is a non-empty data frame
+  if (!inherits(facilities, "sf") || nrow(facilities) == 0) {
+    stop("Error: 'facilities' must be a non-empty sf point geometry data frame.")
+  }
+
   require(ggplot2)
 
   ggplot2::ggplot()+

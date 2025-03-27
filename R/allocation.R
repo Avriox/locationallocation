@@ -17,6 +17,66 @@
 
 allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output){
 
+  # Check demand_raster is a raster layer
+  if (!inherits(demand_raster, "RasterLayer")) {
+    stop("Error: 'demand_raster' must be a raster layer.")
+  }
+
+  # Check traveltime is an output object from the traveltime function
+  if (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3) {
+    stop("Error: 'traveltime' must be an output object from the locationallocation::traveltime function.")
+  }
+
+  # Check bb_area is a numeric vector of length 4 (xmin, ymin, xmax, ymax)
+  if (!inherits(bb_area, "sf") || nrow(bb_area) == 0) {
+    stop("Error: 'bb_area' must be a non-empty sf polygon.")
+  }
+
+  # Check facilities is a non-empty data frame
+  if (!inherits(facilities, "sf") || nrow(facilities) == 0) {
+    stop("Error: 'facilities' must be a non-empty sf point geometry data frame.")
+  }
+
+  # Check weights is a raster layer
+  if (!is.null(weights) && !inherits(weights, "RasterLayer")) {
+    stop("Error: 'weights' must be a raster layer.")
+  }
+
+  # Check objectiveminutes is a numeric value
+  if (!is.numeric(objectiveminutes) || length(objectiveminutes) != 1) {
+    stop("Error: 'objectiveminutes' must be a numeric value.")
+  }
+
+  # Check objectiveshare is a numeric value
+  if (!is.numeric(objectiveshare) || length(objectiveshare) != 1) {
+    stop("Error: 'objectiveshare' must be a numeric value.")
+  }
+
+  # Check heur is a character string and one of the allowed values
+  allowed_heur <- c("max", "kd")
+  if (!is.character(heur) || length(heur) != 1 || !(heur %in% allowed_heur)) {
+    stop(paste("Error: 'heur' must be one of", paste(allowed_heur, collapse = ", "), "."))
+  }
+
+  # Check dowscaling_model_type is a non-empty character string
+  allowed_downscaling <- c("lm", "rf")
+  if (!is.character(dowscaling_model_type) || length(dowscaling_model_type) != 1 || !(dowscaling_model_type %in% allowed_downscaling)) {
+    stop("Error: 'dowscaling_model_type' must either be 'lm' or 'rf'.")
+  }
+
+  # Check mode is a character string and one of the allowed values
+  allowed_modes <- c("walk", "fastest")
+  if (!is.character(mode) || length(mode) != 1 || !(mode %in% allowed_modes)) {
+    stop(paste("Error: 'mode' must be one of", paste(allowed_modes, collapse = ", "), "."))
+  }
+
+  # Check res_output is a single positive numeric value
+  if (!is.numeric(res_output) || length(res_output) != 1 || res_output <= 0) {
+    stop("Error: 'res_output' must be a single positive numeric value.")
+  }
+
+###
+
 if(is.null(traveltime_raster)){
 print("Travel time layer not detected. Running traveltime function first.")
 traveltime_raster_outer <- traveltime(facilities=facilities, bb_area=bb_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)

@@ -11,6 +11,26 @@
 
 traveltime_stats <- function(traveltime, demand_raster, breaks=c(5, 10, 15, 30), objectiveminutes=15){
 
+  # Check traveltime is an output object from the traveltime function
+  if (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3) {
+    stop("Error: 'traveltime' must be an output object from the locationallocation::traveltime function.")
+  }
+
+  # Check demand_raster is a raster layer
+  if (!inherits(demand_raster, "RasterLayer")) {
+    stop("Error: 'demand_raster' must be a raster layer.")
+  }
+
+  # Check breaks is a numeric vector
+  if (!is.numeric(breaks) || length(breaks) < 1) {
+    stop("Error: 'breaks' must be a numeric vector.")
+  }
+
+  # Check objectiveminutes is a numeric value
+  if (!is.numeric(objectiveminutes) || length(objectiveminutes) != 1) {
+    stop("Error: 'objectiveminutes' must be a numeric value.")
+  }
+
   traveltime <- raster::projectRaster(traveltime[[1]], demand_raster)
 
   data_curve <- data.frame(raster::values(traveltime), raster::values(demand_raster))

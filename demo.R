@@ -15,7 +15,11 @@ setwd("C:/Users/Utente/OneDrive - IIASA/Current papers/cooling_centers_allocatio
 # usethis::use_citation()
 # usethis::use_github_action("pkgdown")
 
+devtools::install_github("giacfalk/locationallocation")
+
 pkgdown::build_site()
+
+remove.packages("locationallocation")
 
 ##
 
