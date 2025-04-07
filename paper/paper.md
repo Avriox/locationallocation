@@ -451,7 +451,7 @@ population (exposure), we can use:
 
 output_allocation <- allocation(demand_raster = pop, traveltime_raster=out_tt,
 bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15,
-objectiveshare=0.01, heur="max", dowscaling_model_type="lm",
+objectiveshare=0.99, heur="max", dowscaling_model_type="lm",
 mode="walk", res_output=100)
 
 allocation_plot(output_allocation, bb_area = boundary)
@@ -472,7 +472,7 @@ If we use demand weights (e.g. maximum temperature), we can use:
 
 output_allocation_weighted <- allocation(demand_raster = pop, traveltime_raster=out_tt,
 bb_area = boundary, facilities=fountains, weights=hotdays,
-objectiveminutes=15, objectiveshare=0.01, heur="max",
+objectiveminutes=15, objectiveshare=0.99, heur="max",
 dowscaling_model_type="lm", mode="walk", res_output=100)
 
 allocation_plot(output_allocation_weighted, bb_area = boundary)
