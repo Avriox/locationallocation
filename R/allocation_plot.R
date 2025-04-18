@@ -1,7 +1,7 @@
 #' Plot results of the allocation and allocation_discrete functions
 #'
 #' This function is used to plot the results of the allocation and allocation_discrete functions. It shows the potential locations for new facilities and the coverage attained.
-#' @param output_allocation The output of the allocation or allocation_discrete functions.
+#' @param output_allocation The output of the allocation function.
 #' @param bb_area A boundary box object with the area of interest.
 #' @keywords reporting
 #' @export
@@ -29,6 +29,13 @@ allocation_plot <- function(output_allocation, bb_area){
     ggtitle("Potential locations for new facilities")
 }
 
+#' Plot results of the allocation and allocation_discrete functions
+#'
+#' This function is used to plot the results of the allocation and allocation_discrete functions. It shows the potential locations for new facilities and the coverage attained.
+#' @param allocation_plot_discrete The output of the allocation function.
+#' @param bb_area A boundary box object with the area of interest.
+#' @keywords reporting
+#' @export
 
 allocation_plot_discrete <- function(output_allocation, bb_area){
 
