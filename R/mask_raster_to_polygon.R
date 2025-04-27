@@ -14,9 +14,6 @@ mask_raster_to_polygon <- function(ras = NULL, mask = NULL, inverse = FALSE, upd
 
   stopifnot(inherits(mask, "Raster") | inherits(mask, "sf"))
 
-  stopifnot(raster::compareCRS(ras, mask))
-
-
   ## If mask is a polygon sf, pre-process:
 
   if (inherits(mask, "sf")) {
