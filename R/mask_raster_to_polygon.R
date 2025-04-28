@@ -13,9 +13,6 @@ mask_raster_to_polygon <- function (ras = NULL, mask = NULL, inverse = FALSE, up
   stopifnot(inherits(ras, "Raster"))
   stopifnot(inherits(mask, "Raster") | inherits(mask, "sf"))
   
-  mask <- sf::st_transform(mask, 4326)
-  ras <- raster::projectRaster(ras, crs=sf::st_crs(mask)$proj4string)
-  
   if (inherits(mask, "sf")) {
     stopifnot(unique(as.character(sf::st_geometry_type(mask))) %in% 
                 c("POLYGON", "MULTIPOLYGON"))
