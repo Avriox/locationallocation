@@ -59,6 +59,8 @@ traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_out
 
   t1 <- mask_raster_to_polygon(t1, bb_area)
 
+  raster::crs(t1) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
 return(list(t1, out))
 
 }
