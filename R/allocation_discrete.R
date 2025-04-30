@@ -97,11 +97,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
     traveltime_raster_outer <- traveltime_raster
 
-  }
-
-
-  else if(!is.null(traveltime_raster) & is.null(facilities)) {break}
-
+  } else if(!is.null(traveltime_raster) & is.null(facilities)) {break}
 
   ###############
 
@@ -141,7 +137,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   #######
 
-  samples <- replicate(n_samples, sample(1:length(candidate), n_fac, replace = T))
+  samples <- replicate(n_samples, sample(1:nrow(st_as_sf(candidate)), n_fac, replace = T))
 
   ########
 
