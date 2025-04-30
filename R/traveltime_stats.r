@@ -31,6 +31,8 @@ traveltime_stats <- function(traveltime, demand_raster, breaks=c(5, 10, 15, 30),
     stop("Error: 'objectiveminutes' must be a numeric value.")
   }
 
+  raster::crs(traveltime) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
   traveltime <- raster::projectRaster(traveltime[[1]], demand_raster)
 
   raster::crs(traveltime) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"

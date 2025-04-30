@@ -125,6 +125,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   }
 
+  raster::crs(traveltime_raster_outer[[1]]) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
   traveltime_raster_outer[[1]] <- raster::projectRaster(traveltime_raster_outer[[1]], demand_raster)
 
   raster::crs(traveltime_raster_outer[[1]]) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
@@ -164,6 +166,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   traveltime_raster_new <- gdistance::accCost(traveltime_raster_outer[[2]][[3]], xy.matrix)
 
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
+
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 
@@ -226,6 +230,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   traveltime_raster_new <- gdistance::accCost(traveltime_raster_outer[[2]][[3]], xy.matrix)
 
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
+
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
 

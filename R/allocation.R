@@ -92,10 +92,11 @@ traveltime_raster <- mask_raster_to_polygon(traveltime_raster_outer[[1]], bb_are
 
 totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
+raster::crs(traveltime_raster) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
 traveltime_raster = raster::projectRaster(traveltime_raster, demand_raster)
 
 raster::crs(traveltime_raster) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
-
 
 demand_raster <-  raster::overlay(demand_raster, traveltime_raster, fun = function(x, y) {
   x[y<=objectiveminutes] <- NA
@@ -157,7 +158,11 @@ repeat {
 
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
+
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
