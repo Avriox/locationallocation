@@ -33,6 +33,8 @@ traveltime_stats <- function(traveltime, demand_raster, breaks=c(5, 10, 15, 30),
 
   traveltime <- raster::projectRaster(traveltime[[1]], demand_raster)
 
+  raster::crs(traveltime) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
   data_curve <- data.frame(raster::values(traveltime), raster::values(demand_raster))
 
   data_curve <- na.omit(data_curve)

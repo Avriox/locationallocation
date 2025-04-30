@@ -127,6 +127,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   traveltime_raster_outer[[1]] <- raster::projectRaster(traveltime_raster_outer[[1]], demand_raster)
 
+  raster::crs(traveltime_raster_outer[[1]]) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
   demand_raster <-  raster::overlay(demand_raster, traveltime_raster_outer[[1]], fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
     return(x)
@@ -164,6 +166,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
+
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
@@ -224,6 +228,8 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
 
   traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
+
+  raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new_min <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
 

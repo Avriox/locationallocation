@@ -94,6 +94,9 @@ totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
 traveltime_raster = raster::projectRaster(traveltime_raster, demand_raster)
 
+raster::crs(traveltime_raster) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+
+
 demand_raster <-  raster::overlay(demand_raster, traveltime_raster, fun = function(x, y) {
   x[y<=objectiveminutes] <- NA
   return(x)
