@@ -1,6 +1,7 @@
 Package: locationallocation
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
+URL: https://giacfalk.github.io/locationallocation
 Authors@R: 
     person("Giacomo", "Falchetta", , "giacomo.falchetta@cmcc.it", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2607-2195"))

@@ -119,9 +119,15 @@ repeat {
 
   } else if (heur =="max"){
 
+    normalize_raster <- function(r) {
+      r_min <- cellStats(r, stat='min')
+      r_max <- cellStats(r, stat='max')
+      (r - r_min) / (r_max - r_min)
+    }
+
   if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
     weights <- mask_raster_to_polygon(weights, bb_area)
-    demand_raster_e <- demand_raster*(weights/mean(raster::values(weights), na.rm=T))
+    demand_raster_e <- normalize_raster(demand_raster)*normalize_raster(weights)
 
     all = raster::which.max(demand_raster_e)
 

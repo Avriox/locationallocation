@@ -109,6 +109,21 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   demand_raster <- mask_raster_to_polygon(demand_raster, bb_area)
 
+  ###
+
+  normalize_raster <- function(r) {
+    r_min <- cellStats(r, stat='min')
+    r_max <- cellStats(r, stat='max')
+    (r - r_min) / (r_max - r_min)
+  }
+
+  if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
+    weights <- mask_raster_to_polygon(weights, bb_area)
+    demand_raster <- normalize_raster(demand_raster)*normalize_raster(weights)
+  }
+
+  ###
+
   totalpopconstant = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)
 
   if(!exists("traveltime_raster_outer")){
