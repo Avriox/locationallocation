@@ -16,7 +16,7 @@
 #' @keywords location-allocation
 #' @export
 
-allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output, approach = "norm")){
+allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output, approach = "norm"){
 
   # Check demand_raster is a raster layer
   if (!inherits(demand_raster, "RasterLayer")) {
