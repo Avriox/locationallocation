@@ -13,10 +13,12 @@
 #' @param mode The mode of transport.
 #' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
 #' @param n_samples The number of samples to generate in the heuristic approach for identifying the best set of facilities to be allocated.
+#' @param par A logical value indicating whether to run the function in parallel or not. Default is FALSE.
+#' @param approach The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.
 #' @keywords location-allocation
 #' @export
 
-allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par){
+allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par, approach = "norm"){
 
   # Check demand_raster is a raster layer
   if (!inherits(demand_raster, "RasterLayer")) {
@@ -117,9 +119,12 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
     (r - r_min) / (r_max - r_min)
   }
 
-  if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
+  if(!is.null(weights) & approach=="norm"){ # optimize based on risk (exposure*hazard), and not on exposure only
     weights <- mask_raster_to_polygon(weights, bb_area)
     demand_raster <- normalize_raster(demand_raster)*normalize_raster(weights)
+  } else if(!is.null(weights) & approach=="absweights"){ # optimize based on risk (exposure*hazard), and not on exposure only
+      weights <- mask_raster_to_polygon(weights, bb_area)
+      demand_raster <- normalize_raster(demand_raster)*weights
   }
 
   ###

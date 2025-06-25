@@ -74,7 +74,7 @@ ggsave("allocation_15mins_fountains_weighted.png", height = 5, width = 5, scale=
 
 ####
 
-candidates <- st_sample(boundary, 500)
+candidates <- st_sample(boundary, 30)
 
 output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100, par=T)
 

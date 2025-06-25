@@ -12,10 +12,11 @@
 #' @param dowscaling_model_type The type of model used for the spatial downscaling of the travel time layer.
 #' @param mode The mode of transport.
 #' @param res_output The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.
+#' @param approach The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.
 #' @keywords location-allocation
 #' @export
 
-allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output){
+allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=facilities, weights=NULL, objectiveminutes=10, objectiveshare=0.99, heur="max", dowscaling_model_type, mode, res_output, approach = "norm")){
 
   # Check demand_raster is a raster layer
   if (!inherits(demand_raster, "RasterLayer")) {
@@ -125,17 +126,21 @@ repeat {
       (r - r_min) / (r_max - r_min)
     }
 
-  if(!is.null(weights)){ # optimize based on risk (exposure*hazard), and not on exposure only
-    weights <- mask_raster_to_polygon(weights, bb_area)
-    demand_raster_e <- normalize_raster(demand_raster)*normalize_raster(weights)
+    if(!is.null(weights) & approach=="norm"){ # optimize based on risk (exposure*hazard), and not on exposure only
+      weights <- mask_raster_to_polygon(weights, bb_area)
+      demand_raster <- normalize_raster(demand_raster)*normalize_raster(weights)
 
-    all = raster::which.max(demand_raster_e)
 
-  } else{
+
+    } else if(!is.null(weights) & approach=="absweights"){ # optimize based on risk (exposure*hazard), and not on exposure only
+      weights <- mask_raster_to_polygon(weights, bb_area)
+      demand_raster <- normalize_raster(demand_raster)*weights
+    }
+
 
     all = raster::which.max(demand_raster)
 
-  }}
+   }
 
   pos = as.data.frame(raster::xyFromCell(demand_raster, all))
 
