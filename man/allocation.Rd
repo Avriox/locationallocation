@@ -15,7 +15,8 @@ allocation(
   heur = "max",
   dowscaling_model_type,
   mode,
-  res_output
+  res_output,
+  approach = "norm"
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ allocation(
 \item{mode}{The mode of transport.}
 
 \item{res_output}{The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.}
+
+\item{approach}{The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.}
 }
 \description{
 This function is used to allocate facilities in a continuous location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on the demand, travel time, and weights for the demand, and target travel time threshold and share of the demand to be covered.

@@ -17,7 +17,8 @@ allocation_discrete(
   mode,
   res_output,
   n_samples,
-  par
+  par,
+  approach = "norm"
 )
 }
 \arguments{
@@ -44,6 +45,10 @@ allocation_discrete(
 \item{res_output}{The spatial resolution of the friction raster (and of the analysis), in meters. If <1000, a spatial downscaling approach is used.}
 
 \item{n_samples}{The number of samples to generate in the heuristic approach for identifying the best set of facilities to be allocated.}
+
+\item{par}{A logical value indicating whether to run the function in parallel or not. Default is FALSE.}
+
+\item{approach}{The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.}
 }
 \description{
 This function is used to allocate facilities in a discrete location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on a user-defined set of locations, objective travel time, and maximum number of allocable facilities. The problem is solved using a statistical heuristic approach that generates samples of the candidate locations (on top of the existing locations) and selects the facilities in the one that minimizes the objective function.
