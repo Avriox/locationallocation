@@ -15,10 +15,12 @@
 #' @param n_samples The number of samples to generate in the heuristic approach for identifying the best set of facilities to be allocated.
 #' @param par A logical value indicating whether to run the function in parallel or not. Default is FALSE.
 #' @param approach The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.
+#' @param exp_demand The exponent for the demand raster. Default is 1. A higher value will give less relative weight to areas with higher demand - with respect to the weights layer. This is useful in cases where the users want to increase the allocation in areas with higher values in the weights layer.
+#' @param exp_weight The exponent for the weights raster. Default is 1.A higher value will give less relative weight to areas with higher weights - with respect to the demand layer. This is useful in cases where the users want to increase the allocation in areas with higher values in the demand layer.
 #' @keywords location-allocation
 #' @export
 
-allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par, approach = "norm"){
+allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par, approach = "norm", exp_demand = 1, exp_weight = 1){
 
   # Check demand_raster is a raster layer
   if (!inherits(demand_raster, "RasterLayer")) {
@@ -114,17 +116,22 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   ###
 
   normalize_raster <- function(r) {
-    r_min <- cellStats(r, stat='min')
-    r_max <- cellStats(r, stat='max')
+    r_min <- raster::cellStats(r, stat='min')
+    r_max <- raster::cellStats(r, stat='max')
     (r - r_min) / (r_max - r_min)
   }
 
   if(!is.null(weights) & approach=="norm"){ # optimize based on risk (exposure*hazard), and not on exposure only
     weights <- mask_raster_to_polygon(weights, bb_area)
-    demand_raster <- normalize_raster(demand_raster)*normalize_raster(weights)
+    demand_raster <- (normalize_raster(demand_raster)^exp_demand)*(normalize_raster(weights)^exp_weight)
+
   } else if(!is.null(weights) & approach=="absweights"){ # optimize based on risk (exposure*hazard), and not on exposure only
-      weights <- mask_raster_to_polygon(weights, bb_area)
-      demand_raster <- normalize_raster(demand_raster)*weights
+    weights <- mask_raster_to_polygon(weights, bb_area)
+    demand_raster <- (normalize_raster(demand_raster)^exp_demand)*(weights^exp_weight)
+
+  } else if(is.null(weights) ) {
+
+    demand_raster <- demand_raster^exp_demand
   }
 
   ###
@@ -163,7 +170,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   runner <- function(i){
 
-  demand_raster <- demand_raster_bk
+  demand_rasterio <- demand_raster_bk
 
   points = rbind(sf::st_coordinates(facilities), sf::st_coordinates(sf::st_as_sf(candidate))[samples[,i],])
   points <- data.frame(x=points[,1], y=points[,2])
@@ -181,22 +188,22 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   # Run the accumulated cost algorithm to make the final output map. This can be quite slow (potentially hours).
   traveltime_raster_new <- gdistance::accCost(traveltime_raster_outer[[2]][[3]], xy.matrix)
 
-  traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_raster))
+  traveltime_raster_new = raster::crop(traveltime_raster_new, raster::extent(demand_rasterio))
 
   raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
-  traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_raster)
+  traveltime_raster_new <- raster::projectRaster(traveltime_raster_new, demand_rasterio)
 
   raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
   traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
-  demand_raster <- raster::overlay(demand_raster, traveltime_raster_new, fun = function(x, y) {
+  demand_rasterio <- raster::overlay(demand_rasterio, traveltime_raster_new, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
     return(x)
   })
 
-  k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
+  k = raster::cellStats(demand_rasterio, 'sum', na.rm = TRUE)/totalpopconstant
 
   return(k)
 
