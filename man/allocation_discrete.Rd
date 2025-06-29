@@ -18,7 +18,9 @@ allocation_discrete(
   res_output,
   n_samples,
   par,
-  approach = "norm"
+  approach = "norm",
+  exp_demand = 1,
+  exp_weights = 1
 )
 }
 \arguments{
@@ -49,6 +51,10 @@ allocation_discrete(
 \item{par}{A logical value indicating whether to run the function in parallel or not. Default is FALSE.}
 
 \item{approach}{The approach to be used for the allocation. Options are "norm" (default) and "equity". If "norm", the allocation is based on the normalized demand raster multiplied by the normalized weights raster. If "absweights", the allocation is based on the normalized demand raster multiplied by the raw weights raster.}
+
+\item{exp_demand}{The exponent for the demand raster. Default is 1. A higher value will give less relative weight to areas with higher demand - with respect to the weights layer. This is useful in cases where the users want to increase the allocation in areas with higher values in the weights layer.}
+
+\item{exp_weights}{The exponent for the weights raster. Default is 1.A higher value will give less relative weight to areas with higher weights - with respect to the demand layer. This is useful in cases where the users want to increase the allocation in areas with higher values in the demand layer.}
 }
 \description{
 This function is used to allocate facilities in a discrete location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on a user-defined set of locations, objective travel time, and maximum number of allocable facilities. The problem is solved using a statistical heuristic approach that generates samples of the candidate locations (on top of the existing locations) and selects the facilities in the one that minimizes the objective function.
