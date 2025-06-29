@@ -145,6 +145,7 @@ allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boun
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/allocation_discrete_fromscratch_fountains.png?raw=true" alt="" width="600"/>
 </p>
 
+Of course, also in the case of the discrete allocation problem, a weight layer and weights normalisation and exponentiation parameters can be set as arguments to the function.
 
 ## Disclaimer
 
