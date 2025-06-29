@@ -1,4 +1,4 @@
-# locationallocation (v0.1)
+# locationallocation (v0.1.1)
  
 locationallocation: an R package to solve Maximal Coverage Location-Allocation problems using geospatial data
 
@@ -111,12 +111,19 @@ allocation_plot(output_allocation_weighted, bb_area = boundary)
 <img src="https://github.com/giacfalk/locationallocation/blob/main/outputs/allocation_15mins_fountains_weighted.png?raw=true" alt="" width="600"/>
 </p>
 
+It is also possible to define different demand and weighting layers normalisation and exponentiation (to increase the relative role of the two with respect to one another) via the `approach`, `exp_demand`, and `exp_weights` parameters (see package helpfile for more details):
+
+``` r
+output_allocation_weighted_2 <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=hotdays, objectiveminutes=15, objectiveshare=0.99, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100, approach = "norm", exp_demand = 2, exp_weights = 1)
+
+```
+
 A variant of the allocation problem is the case when the set of candidate locations to allocate new faciltiies is discrete (and not continuous over the study area, as in the previous example). In this case, the user needs to provide a discrete set of location points into the `candidate` parameter of the allocation_discrete function, as well as a maximum number of facilities (`n_fac` parameter) that can be selected among the candidate locations. The function will apply a quasi-optimality heuristic (using a randomisation based approach, where the number of replications - defined by the `n_samples` parameters - will gradually approach the global optimum but it will linearly increase the computational time. 
 
 ``` r
-candidates <- st_sample(boundary, 30)
+candidates <- st_sample(boundary, 300)
 
-output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100)
+output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000)
 
 allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
 ```
@@ -130,7 +137,7 @@ Consider also the case of a problem where there are no existing facilities to st
 ``` r
 set.seed(333)
 
-output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100)
+output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000)
 
 allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boundary)
 ```
