@@ -55,7 +55,7 @@ ggsave("traveltime_map_fountains.png", height = 5, width = 5, scale=1.3)
 
 ###
 
-traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=15)
+traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=5)
 
 ###
 
@@ -98,7 +98,7 @@ candidates <- st_sample(boundary, 300)
 
 set.seed(333)
 
-output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 3, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100, par=T)
+output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000)
 
 allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
 
@@ -108,19 +108,7 @@ ggsave("allocation_discrete_fountains.png", height = 5, width = 5, scale=1.3)
 
 set.seed(333)
 
-output_allocation_discrete_weighted <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 3, weights=hotdays, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=10, par=T, exp_weight = 1, approach = "norm")
-
-allocation_plot_discrete(output_allocation_discrete_weighted, bb_area = boundary)
-
-ggsave("allocation_discrete_fountains_weighted.png", height = 5, width = 5, scale=1.3)
-
-###
-
-###
-
-set.seed(333)
-
-output_allocation_discrete_weighted <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 3, weights=hotdays, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=10, par=T, exp_demand = 2, approach = "norm")
+output_allocation_discrete_weighted <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=hotdays, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000, par=T, exp_demand = 2, approach = "norm")
 
 allocation_plot_discrete(output_allocation_discrete_weighted, bb_area = boundary)
 
@@ -130,28 +118,8 @@ ggsave("allocation_discrete_fountains_weighted.png", height = 5, width = 5, scal
 
 set.seed(333)
 
-output_allocation_discrete_weighted_absweights <- allocation_discrete(demand_raster = pop, traveltime_raster = out_tt, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, weights=hotdays, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=100, par=T, approach = "absweights")
-
-allocation_plot_discrete(output_allocation_discrete_weighted_absweights, bb_area = boundary)
-
-ggsave("allocation_discrete_fountains_weighted_absweights.png", height = 5, width = 5, scale=1.3)
-
-###
-
-set.seed(333)
-
-output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=1000, n_samples=100)
+output_allocation_discrete_from_scratch <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=1000, n_samples=1000)
 
 allocation_plot_discrete(output_allocation_discrete_from_scratch, bb_area = boundary)
-
-ggsave("allocation_discrete_fromscratch_fountains.png", height = 5, width = 5, scale=1.3)
-
-###
-
-set.seed(333)
-
-output_allocation_discrete_from_scratch_weighted <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=NULL, candidate=candidates, n_fac = 10, weights=hotdays, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=1000, n_samples=100)
-
-allocation_plot_discrete(output_allocation_discrete_from_scratch_weighted, bb_area = boundary)
 
 ggsave("allocation_discrete_fromscratch_fountains.png", height = 5, width = 5, scale=1.3)
