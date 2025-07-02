@@ -8,9 +8,6 @@ home:
   title: "locationallocation R package website"
 
 articles:
-  - title: "Allocation example"
+  - title: "Use example"
     contents:
       - example_allocation
-  - title: "Discrete allocation example"
-    contents:
-      - example_allocation_discrete

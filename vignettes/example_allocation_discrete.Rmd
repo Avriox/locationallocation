@@ -1,8 +1,0 @@
----
-title: "Allocation Example"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Allocation Example}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
