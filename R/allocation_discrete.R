@@ -111,7 +111,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
     facilities
   }
 
-  demand_raster <- mask_raster_to_polygon(demand_raster, bb_area)
+  demand_raster <- locationallocation::mask_raster_to_polygon(demand_raster, bb_area)
 
   ###
 
@@ -122,11 +122,11 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   }
 
   if(!is.null(weights) & approach=="norm"){ # optimize based on risk (exposure*hazard), and not on exposure only
-    weights <- mask_raster_to_polygon(weights, bb_area)
+    weights <- locationallocation::mask_raster_to_polygon(weights, bb_area)
     demand_raster <- (normalize_raster(demand_raster)^exp_demand)*(normalize_raster(weights)^exp_weights)
 
   } else if(!is.null(weights) & approach=="absweights"){ # optimize based on risk (exposure*hazard), and not on exposure only
-    weights <- mask_raster_to_polygon(weights, bb_area)
+    weights <- locationallocation::mask_raster_to_polygon(weights, bb_area)
     demand_raster <- (normalize_raster(demand_raster)^exp_demand)*(weights^exp_weights)
 
   } else if(is.null(weights) ) {
@@ -142,7 +142,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
     traveltime_raster <- demand_raster
     raster::values(traveltime_raster) <- objectiveminutes + 1
-    traveltime_raster <- mask_raster_to_polygon(traveltime_raster, bb_area)
+    traveltime_raster <- locationallocation::mask_raster_to_polygon(traveltime_raster, bb_area)
 
     traveltime_raster_outer <- list(traveltime_raster, out)
 
@@ -164,7 +164,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   #######
 
-  samples <- replicate(n_samples, sample(1:nrow(st_as_sf(candidate)), n_fac, replace = T))
+  samples <- replicate(n_samples, sample(1:nrow(st_as_sf(candidate)), n_fac, replace = F))
 
   ########
 
@@ -196,7 +196,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
-  traveltime_raster_new <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
+  traveltime_raster_new <- locationallocation::mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
   demand_rasterio <- raster::overlay(demand_rasterio, traveltime_raster_new, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA
@@ -210,27 +210,34 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
   }
 
 
-  outer <- pbapply::pblapply(1:n_samples, runner)
-
-  # outer <- function(n_samples, runner, paral=par, n_cores = parallel::detectCores() - 1) {
-  #   if (paral==T) {
-  #     # Determine OS
-  #     if (.Platform$OS.type == "unix") {
-  #       # Use mclapply for Unix-based systems
-  #       result <- parallel::mclapply(1:n_samples, runner, mc.cores = n_cores)
-  #     } else {
-  #       # Use parLapply for Windows
-  #       cl <- parallel::makeCluster(n_cores)
-  #       result <- parallel::parLapply(cl, 1:n_samples, runner)
-  #       parallel::stopCluster(cl)  # Clean up cluster
-  #     }
-  #   } else {
-  #     # Fallback to standard lapply
-  #     result <- pbapply::pblapply(1:n_samples, runner)
-  #   }
-  #
-  #   return(result)
-  # }
+  if (par==T) {
+    # Determine OS
+    if (.Platform$OS.type == "unix") {
+      # Use mclapply for Unix-based systems
+      outer <- parallel::mclapply(1:n_samples, runner, mc.cores = parallel::detectCores() - 1)
+    } else {
+      loaded_pkgs <- .packages()
+      # Use parLapply for Windows
+      cl <- parallel::makeCluster(parallel::detectCores() - 1)
+      parallel::clusterExport(cl, varlist = ls(envir = .GlobalEnv))
+      parallel::clusterExport(cl, varlist = ls(envir = environment()), envir = environment())
+      # Get all currently loaded packages (names only)
+      # Load each package on every cluster worker
+      parallel::clusterEvalQ(cl, {
+        # Loop through the package names and load them
+        pkgs <- .packages()
+        for (p in pkgs) {
+          suppressMessages(require(p, character.only = TRUE))
+        }
+      })
+      outer <- parallel::parLapply(cl, 1:n_samples, runner)
+      parallel::stopCluster(cl)  # Clean up cluster
+      gc()
+    }
+  } else {
+    # Fallback to standard lapply
+    outer <- pbapply::pblapply(1:n_samples, runner)
+  }
 
   ######
 
@@ -260,7 +267,7 @@ if (!is.numeric(n_samples) || length(n_samples) != 1) {
 
   raster::crs(traveltime_raster_new) <- "+proj=longlat +datum=WGS84 +no_defs +type=crs"
 
-  traveltime_raster_new_min <- mask_raster_to_polygon(traveltime_raster_new, bb_area)
+  traveltime_raster_new_min <- locationallocation::mask_raster_to_polygon(traveltime_raster_new, bb_area)
 
   demand_raster <- raster::overlay(demand_raster, traveltime_raster_new_min, fun = function(x, y) {
     x[y<=objectiveminutes] <- NA

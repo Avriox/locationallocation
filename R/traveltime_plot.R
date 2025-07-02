@@ -4,10 +4,11 @@
 #' @param traveltime The output of the traveltime function.
 #' @param bb_area A boundary box object with the area of interest.
 #' @param facilities A sf object with the existing facilities.
+#' @param contour_traveltime A numeric vector with the contour thresholds for the travel time.
 #' @keywords reporting
 #' @export
 
-traveltime_plot <- function(traveltime, bb_area, facilities=NULL){
+traveltime_plot <- function(traveltime, bb_area, facilities=NULL, contour_traveltime = NULL){
 
   # Check traveltime is an output object from the traveltime function
   if (!inherits(traveltime, "list") || length(traveltime) != 2 || !inherits(traveltime[[1]], "RasterLayer") || !inherits(traveltime[[2]], "list") || length(traveltime[[2]]) != 3) {
@@ -29,6 +30,7 @@ traveltime_plot <- function(traveltime, bb_area, facilities=NULL){
   ggplot2::ggplot()+
   theme_void()+
   geom_raster(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(traveltime[[1]], bb_area), xy=T)), aes(x=x, y=y, fill=layer))+
+    geom_contour(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(traveltime[[1]], bb_area), xy=T)), aes(x=x, y=y, z = layer), color = "black", breaks = contour_traveltime)+
   scale_fill_distiller(palette = "Spectral", direction = -1, name="minutes")+
   ggtitle("Travel time (minutes)")+
   geom_sf(data=sf::st_filter(facilities, bb_area), colour=ifelse(is.null(facilities), "transparent", "black"), size=0.5)

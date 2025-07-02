@@ -4,7 +4,12 @@
 \alias{traveltime_plot}
 \title{Plot results of the traveltime function}
 \usage{
-traveltime_plot(traveltime, bb_area, facilities = NULL)
+traveltime_plot(
+  traveltime,
+  bb_area,
+  facilities = NULL,
+  contour_traveltime = NULL
+)
 }
 \arguments{
 \item{traveltime}{The output of the traveltime function.}
@@ -12,6 +17,8 @@ traveltime_plot(traveltime, bb_area, facilities = NULL)
 \item{bb_area}{A boundary box object with the area of interest.}
 
 \item{facilities}{A sf object with the existing facilities.}
+
+\item{contour_traveltime}{A numeric vector with the contour thresholds for the travel time.}
 }
 \description{
 This function is used to plot the results of the traveltime function. It shows the travel time from the facilities to the area of interest.
