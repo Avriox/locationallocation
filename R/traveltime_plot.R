@@ -25,15 +25,29 @@ traveltime_plot <- function(traveltime, bb_area, facilities=NULL, contour_travel
     stop("Error: 'facilities' must be a non-empty sf point geometry data frame.")
   }
 
+  if (!is.null(contour_traveltime) && !is.numeric(contour_traveltime)) {
+    stop("Error: 'contour_traveltime' must be a numeric vector.")
+  }
+
   require(ggplot2)
 
-  ggplot2::ggplot()+
+  p <- ggplot2::ggplot()+
   theme_void()+
   geom_raster(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(traveltime[[1]], bb_area), xy=T)), aes(x=x, y=y, fill=layer))+
-    geom_contour(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(traveltime[[1]], bb_area), xy=T)), aes(x=x, y=y, z = layer), color = "black", breaks = contour_traveltime)+
   scale_fill_distiller(palette = "Spectral", direction = -1, name="minutes")+
   ggtitle("Travel time (minutes)")+
   geom_sf(data=sf::st_filter(facilities, bb_area), colour=ifelse(is.null(facilities), "transparent", "black"), size=0.5)
+
+  if(!is.null(contour_traveltime)){
+
+    p +
+      geom_contour(data=na.omit(raster::as.data.frame(mask_raster_to_polygon(traveltime[[1]], bb_area), xy=T)), aes(x=x, y=y, z = layer), color = "black", breaks = contour_traveltime)
+
+  } else{
+
+    p
+
+  }
 
 
 }

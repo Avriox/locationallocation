@@ -2,7 +2,7 @@
 title: "Use example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Allocation Example}
+  %\VignetteIndexEntry{Use example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,109 +13,22 @@ library(locationallocation)
 demo_data_load()
 ```
 
+## 0. Traveltime based on currently existing facilities
+
+```{r traveltime, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="walk", res_output=100)
+
+traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
+```
+
 ## 1. Baseline: continuous allocation over area
 
-```{r baseline}
-# allocate to cover 90% of population within 15 minutes walking
-set.seed(123)
-alloc_base <- allocation(
-  facilities = fountains,
-  demand_raster = pop,
-  bb_area = boundary,
-  mode = "walk",
-  objectiveminutes = 15,
-  coverage = 0.90
-)
-summary(alloc_base)
-plot(alloc_base)
+```{r baseline, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+# allocate to cover 99% of population within 15 minutes walking
+output_allocation <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=NULL, objectiveminutes=15, objectiveshare=0.99, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100)
+
+allocation_plot(output_allocation, bb_area = boundary)
 ```
 
-## 2. Tightening the threshold
 
-```{r tighter}
-set.seed(123)
-alloc_tight <- allocation(
-  facilities = fountains,
-  demand_raster = pop,
-  bb_area = boundary,
-  mode = "walk",
-  objectiveminutes = 10,
-  coverage = 0.95
-)
-summary(alloc_tight)
-```
 
-## 3. Discrete candidates
-
-```{r discrete}
-set.seed(123)
-alloc_disc <- allocation_discrete(
-  candidate = candidate_sites,  # sf points of possible new sites
-  demand_raster = pop,
-  facilities = fountains,
-  mode = "walk",
-  objectiveminutes = 15,
-  n_fac = 5
-)
-alloc_disc
-plot(alloc_disc)
-```
-
-## 4. Without existing facilities
-
-```{r no_existing}
-set.seed(456)
-alloc_fresh <- allocation_discrete(
-  candidate = candidate_sites,
-  demand_raster = pop,
-  facilities = NULL,
-  mode = "walk",
-  objectiveminutes = 20,
-  n_fac = 8
-)
-alloc_fresh
-```
-
-## 5. Change travel mode
-
-```{r drive}
-set.seed(789)
-alloc_drive <- allocation(
-  facilities = fountains,
-  demand_raster = pop,
-  bb_area = boundary,
-  mode = "fastest",
-  objectiveminutes = 10,
-  coverage = 0.95
-)
-alloc_drive
-```
-
-## 6. Compare results
-
-```{r compare}
-res <- data.frame(
-  scenario = c("baseline", "tight", "discrete", "fresh", "drive"),
-  n_facilities = c(
-    length(alloc_base$new_facilities),
-    length(alloc_tight$new_facilities),
-    length(alloc_disc$new_facilities),
-    length(alloc_fresh$new_facilities),
-    length(alloc_drive$new_facilities)
-  ),
-  coverage_achieved = c(
-    alloc_base$coverage,
-    alloc_tight$coverage,
-    alloc_disc$coverage,
-    alloc_fresh$coverage,
-    alloc_drive$coverage
-  )
-)
-print(res)
-```
-
-## Session Info
-
-```{r session-info}
-sessionInfo()
-```

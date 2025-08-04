@@ -11,6 +11,7 @@ allocation_discrete(
   facilities = NULL,
   candidate,
   n_fac = Inf,
+  objectiveshare = NULL,
   weights = NULL,
   objectiveminutes = 10,
   dowscaling_model_type,
@@ -34,7 +35,9 @@ allocation_discrete(
 
 \item{candidate}{A sf object with the candidate locations for the new facilities.}
 
-\item{n_fac}{The number of facilities that can be allocated.}
+\item{n_fac}{The (maximum) number of facilities that can be allocated.}
+
+\item{objectiveshare}{The share of the demand layer to be covered by adding at most the number of facilities defined by the n_fac parameter from the pool of candidate facilities.}
 
 \item{weights}{A raster with the weights for the demand.}
 
@@ -57,6 +60,6 @@ allocation_discrete(
 \item{exp_weights}{The exponent for the weights raster. Default is 1.A higher value will give less relative weight to areas with higher weights - with respect to the demand layer. This is useful in cases where the users want to increase the allocation in areas with higher values in the demand layer.}
 }
 \description{
-This function is used to allocate facilities in a discrete location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on a user-defined set of locations, objective travel time, and maximum number of allocable facilities. The problem is solved using a statistical heuristic approach that generates samples of the candidate locations (on top of the existing locations) and selects the facilities in the one that minimizes the objective function.
+This function is used to allocate facilities in a discrete location problem. It uses the accumulated cost algorithm to find the optimal location for the facilities based on a user-defined set of locations, objective travel time, and (maximum) number of allocable facilities. If a objectiveshare parameter is specified, the algorithm identifies the best set of size of up to n_fac facilities to achieve the targeted coverage share. The problem is solved using a statistical heuristic approach that generates samples of the candidate locations (on top of the existing locations) and selects the facilities in the one that minimizes the objective function.
 }
 \keyword{location-allocation}

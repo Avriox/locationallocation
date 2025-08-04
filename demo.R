@@ -53,7 +53,8 @@ dev.off()
 
 out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="walk", res_output=100)
 
-traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains)
+traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=NULL)
+traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=15)
 
 ggsave("traveltime_map_fountains.png", height = 5, width = 5, scale=1.3)
 
@@ -102,6 +103,8 @@ candidates <- st_sample(boundary, 300)
 
 set.seed(333)
 
+### add allocation by target share (similar to allocation, but force pixel selection among locations where facilities can be placed)
+
 output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 2, weights=NULL, objectiveminutes=5, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=10000, par=T)
 
 allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
@@ -131,6 +134,15 @@ allocation_plot_discrete(output_allocation_discrete_weighted_2, bb_area = bounda
 ggsave("allocation_discrete_fountains_weighted_2.png", height = 5, width = 5, scale=1.3)
 
 ###
+
+set.seed(333)
+
+output_allocation_discrete_targetshare <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, objectiveshare=0.5, weights=NULL, objectiveminutes=5, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000, par=F)
+
+allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
+
+ggsave("allocation_discrete_fountains.png", height = 5, width = 5, scale=1.3)
+
 
 set.seed(333)
 
