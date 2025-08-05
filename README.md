@@ -134,6 +134,7 @@ allocation_plot_discrete(output_allocation_discrete, bb_area = boundary)
 
 Consider the scenario where the user wants to select up to `n_fac` facilities to attain a given `objectiveshare` of the total demand (if this is feasible):
 
+``` r
 output_allocation_discrete_targetshare <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 10, objectiveshare=0.75, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000)
 
 allocation_plot_discrete(output_allocation_discrete_targetshare, bb_area = boundary)
