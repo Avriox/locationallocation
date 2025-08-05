@@ -137,7 +137,7 @@ ggsave("allocation_discrete_fountains_weighted_2.png", height = 5, width = 5, sc
 
 set.seed(333)
 
-output_allocation_discrete_targetshare <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 5, objectiveshare=0.75, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000, par=T)
+output_allocation_discrete_targetshare <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 15, objectiveshare=0.85, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000, par=T)
 
 allocation_plot_discrete(output_allocation_discrete_targetshare, bb_area = boundary)
 
