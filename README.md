@@ -121,7 +121,7 @@ output_allocation_weighted_2 <- allocation(demand_raster = pop, traveltime_raste
 A variant of the allocation problem is the case when the set of candidate locations to allocate new faciltiies is discrete (and not continuous over the study area, as in the previous example). In this case, the user needs to provide a discrete set of location points into the `candidate` parameter of the allocation_discrete function, as well as a maximum number of facilities (`n_fac` parameter) that can be selected among the candidate locations. The function will apply a quasi-optimality heuristic (using a randomisation based approach, where the number of replications - defined by the `n_samples` parameters - will gradually approach the global optimum but it will linearly increase the computational time. Of course, also in the case of the discrete allocation problem, a weight layer and weights normalisation and exponentiation parameters can be set as arguments to the function. 
 
 ``` r
-candidates <- st_sample(boundary, 30)
+candidates <- st_sample(boundary, 20)
 
 output_allocation_discrete <- allocation_discrete(demand_raster = pop, traveltime_raster=NULL, bb_area = boundary, facilities=fountains, candidate=candidates, n_fac = 2, weights=NULL, objectiveminutes=15, dowscaling_model_type="lm", mode="walk", res_output=100, n_samples=1000, par=T)
 
