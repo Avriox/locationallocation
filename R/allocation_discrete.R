@@ -482,9 +482,9 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
 
       k = raster::cellStats(demand_raster, 'sum', na.rm = TRUE)/totalpopconstant
 
-      print(paste0("Coverage share attained: ", k))
+      print(paste0("Coverage share attained: ", 1-k))
 
-      if (kiter==n_fac){ print0("The target coverage share could not be attained with the maximum number of allocable facilities targeted by the n_fac parameter.")}
+      if (kiter==n_fac){ print("The target coverage share could not be attained with the maximum number of allocable facilities targeted by the n_fac parameter.")}
 
       ###
 
@@ -492,6 +492,8 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
     }
 
     ###
+
+    print(paste0("Target coverage share of ", objectiveshare ," attained with ", kiter , " facilities"))
 
     return(list(sf::st_as_sf(candidate)[samples[,which.min(unlist(outer))],], traveltime_raster_new_min, k))
 
