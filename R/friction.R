@@ -51,9 +51,6 @@ if(mode =="fastest"){
 
 friction_layer <- raster::raster(friction_layer)
 
-friction_layer[is.na(friction_layer)] <- mean(raster::values(friction_layer),
-                                              na.rm = TRUE)
-
 ###
 
 if (res_output<1000){
@@ -102,7 +99,10 @@ if (res_output<1000){
     verbose=T
   )
 
+  raster::values(res_rf$map) <- ifelse(raster::values(res_rf$map)<=0, min(raster::values(friction_layer), na.rm=T), raster::values(res_rf$map))
+
   friction_layer <- res_rf$map
+
 
 } else{
 
