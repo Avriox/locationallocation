@@ -29,12 +29,10 @@ pkgdown::build_site()
 
 remove.packages("locationallocation")
 
-# devtools::install_local(getwd())
-#
-# library(locationallocation)
-
 demo_data_load()
 
+#######
+#######
 #######
 
 terra::plot(pop)
@@ -56,7 +54,17 @@ out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_ty
 traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=NULL)
 traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=15)
 
-ggsave("traveltime_map_fountains.png", height = 5, width = 5, scale=1.3)
+ggsave("traveltime_map_fountains_walk.png", height = 5, width = 5, scale=1.3)
+
+####
+
+out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="fastest", res_output=100)
+
+traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=NULL)
+traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=15)
+
+ggsave("traveltime_map_fountains_fastest.png", height = 5, width = 5, scale=1.3)
+
 
 ###
 
