@@ -5,29 +5,13 @@ library(tidyverse)
 
 setwd("C:/Users/Utente/OneDrive - IIASA/Current papers/cooling_centers_allocation/locationallocation/")
 
-# usethis::use_pkgdown()
-# usethis::use_gpl3_license()
-# usethis::use_author(
-#   given = "Giacomo",
-#   family = "Falchetta",
-#   role = c("aut", "cre"),
-#   email = "giacomo.falchetta@cmcc.it",
-#   comment = c(ORCID = "0000-0003-2607-2195")
-# )
-# usethis::use_citation()
-# usethis::use_github_action("pkgdown")
-
 ##
-
-devtools::document()
-
-###
 
 devtools::install_github("giacfalk/locationallocation")
 
-pkgdown::build_site()
+library(locationallocation)
 
-remove.packages("locationallocation")
+##
 
 demo_data_load()
 
@@ -58,17 +42,24 @@ ggsave("traveltime_map_fountains_walk.png", height = 5, width = 5, scale=1.3)
 
 ####
 
-out_tt <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="fastest", res_output=100)
+out_tt2 <- traveltime(facilities=fountains, bb_area=boundary, dowscaling_model_type="lm", mode="fastest", res_output=100)
 
-traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=NULL)
-traveltime_plot(traveltime=out_tt,  bb_area=boundary, facilities = fountains, contour_traveltime=15)
+traveltime_plot(traveltime=out_tt2,  bb_area=boundary, facilities = fountains, contour_traveltime=NULL)
+traveltime_plot(traveltime=out_tt2,  bb_area=boundary, facilities = fountains, contour_traveltime=15)
 
 ggsave("traveltime_map_fountains_fastest.png", height = 5, width = 5, scale=1.3)
 
 
 ###
 
-traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=5)
+traveltime_stats(traveltime = out_tt, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=15)
+
+ggsave("traveltime_curve_fountains_waòl.png", height = 5, width = 5, scale=1.3)
+
+traveltime_stats(traveltime = out_tt2, demand_raster = pop, breaks=c(5, 10, 15, 30), objectiveminutes=15)
+
+ggsave("traveltime_curve_fountains_fastest.png", height = 5, width = 5, scale=1.3)
+
 
 ###
 
@@ -87,20 +78,12 @@ allocation_plot(output_allocation_weighted, bb_area = boundary)
 ggsave("allocation_15mins_fountains_weighted.png", height = 5, width = 5, scale=1.3)
 
 
-###
+output_allocation_weighted_expdemand2 <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=hotdays, objectiveminutes=15, objectiveshare=0.99, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100, approach = "norm", exp_demand = 2)
 
-output_allocation_weighted_absweights <- allocation(demand_raster = pop, traveltime_raster=out_tt, bb_area = boundary, facilities=fountains, weights=hotdays, objectiveminutes=15, objectiveshare=0.99, heur="max", dowscaling_model_type="lm", mode="walk", res_output=100, approach = "absweights")
+allocation_plot(output_allocation_weighted_expdemand2, bb_area = boundary)
 
-allocation_plot(output_allocation_weighted_absweights, bb_area = boundary)
+ggsave("allocation_15mins_fountains_weighted_exp_demand2.png", height = 5, width = 5, scale=1.3)
 
-ggsave("allocation_15mins_fountains_weighted_absweights.png", height = 5, width = 5, scale=1.3)
-
-
-####
-
-plot(output_allocation_weighted_absweights[[1]], col="red")
-plot(output_allocation_weighted[[1]], col="blue", add=T)
-plot(output_allocation[[1]], col="black", add=T)
 
 ####
 ####
