@@ -25,8 +25,16 @@ allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilitie
     stop("Error: 'demand_raster' must be a raster layer.")
   }
 
-  # Check traveltime is an output object from the traveltime function
-  if (!inherits(traveltime_raster, "list") || length(traveltime_raster) != 2 || !inherits(traveltime_raster[[1]], "RasterLayer") || !inherits(traveltime_raster[[2]], "list") || length(traveltime_raster[[2]]) != 3) {
+
+	if(is.null(traveltime_raster) & !is.null(facilities)){
+      print("Travel time layer not detected. Running traveltime function first.")
+      traveltime_raster <- traveltime(facilities=facilities, bb_area=bb_area, dowscaling_model_type=dowscaling_model_type, mode=mode, res_output=res_output)
+
+	# Check traveltime is an output object from the traveltime function
+
+    }
+
+	if (!inherits(traveltime_raster, "list") || length(traveltime_raster) != 2 || !inherits(traveltime_raster[[1]], "RasterLayer") || !inherits(traveltime_raster[[2]], "list") || length(traveltime_raster[[2]]) != 3) {
     stop("Error: 'traveltime_raster' must be an output object from the locationallocation::traveltime function.")
   }
 
@@ -77,6 +85,10 @@ allocation <- function(demand_raster, traveltime_raster=NULL, bb_area, facilitie
   if (!is.numeric(res_output) || length(res_output) != 1 || res_output <= 0) {
     stop("Error: 'res_output' must be a single positive numeric value.")
   }
+
+###
+
+  sf::sf_use_s2(TRUE)
 
 ###
 

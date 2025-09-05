@@ -38,6 +38,14 @@ traveltime <- function(facilities, bb_area, dowscaling_model_type, mode, res_out
     stop("Error: 'res_output' must be a single positive numeric value.")
   }
 
+
+  ###
+
+  sf::sf_use_s2(TRUE)
+
+  ###
+
+
   out <- friction(bb_area = bb_area, mode=mode, res_output=res_output, dowscaling_model_type=dowscaling_model_type)
 
   # assess current accessibility

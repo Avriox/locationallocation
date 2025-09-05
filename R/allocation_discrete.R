@@ -88,6 +88,11 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
 
   ###
 
+  sf::sf_use_s2(TRUE)
+
+  ###
+
+
   if(is.null(objectiveshare)){
 
 
