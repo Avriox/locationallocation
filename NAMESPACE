@@ -2,6 +2,7 @@
 
 export(allocation)
 export(allocation_discrete)
+export(allocation_discrete_2)
 export(allocation_plot)
 export(allocation_plot_discrete)
 export(demo_data_load)
