@@ -218,11 +218,11 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
     }
 
 
-    if (par==T) {
+    #if (par==T) {
       # Determine OS
       if (.Platform$OS.type == "unix") {
         # Use mclapply for Unix-based systems
-        outer <- parallel::mclapply(1:n_samples, runner, mc.cores = parallel::detectCores() - 1)
+        outer <- parallel::mclapply(1:n_samples, runner, mc.cores = par)
       } else {
         loaded_pkgs <- .packages()
         # Use parLapply for Windows
@@ -242,10 +242,10 @@ allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, 
         parallel::stopCluster(cl)  # Clean up cluster
         gc()
       }
-    } else {
+    # } else {
       # Fallback to standard lapply
-      outer <- lapply(1:n_samples, runner)
-    }
+    #   outer <- lapply(1:n_samples, runner)
+    # }
 
     ######
 
