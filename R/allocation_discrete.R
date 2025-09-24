@@ -21,7 +21,7 @@
 #' @keywords location-allocation
 #' @export
 
-allocation_discrete <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, objectiveshare = NULL, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par, approach = "norm", exp_demand = 1, exp_weights = 1){
+allocation_discrete_2 <- function(demand_raster, traveltime_raster=NULL, bb_area, facilities=NULL, candidate, n_fac = Inf, objectiveshare = NULL, weights=NULL, objectiveminutes=10, dowscaling_model_type, mode, res_output, n_samples, par, approach = "norm", exp_demand = 1, exp_weights = 1){
 
   # Check demand_raster is a raster layer
   if (!inherits(demand_raster, "RasterLayer")) {
