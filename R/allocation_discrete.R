@@ -218,7 +218,7 @@ allocation_discrete_2 <- function(demand_raster, traveltime_raster=NULL, bb_area
     }
 
 
-    #if (par==T) {
+   
       # Determine OS
       if (.Platform$OS.type == "unix") {
         # Use mclapply for Unix-based systems
@@ -226,7 +226,7 @@ allocation_discrete_2 <- function(demand_raster, traveltime_raster=NULL, bb_area
       } else {
         loaded_pkgs <- .packages()
         # Use parLapply for Windows
-        cl <- parallel::makeCluster(parallel::detectCores() - 1)
+        cl <- parallel::makeCluster(par)
         parallel::clusterExport(cl, varlist = ls(envir = .GlobalEnv))
         parallel::clusterExport(cl, varlist = ls(envir = environment()), envir = environment())
         # Get all currently loaded packages (names only)
@@ -242,10 +242,7 @@ allocation_discrete_2 <- function(demand_raster, traveltime_raster=NULL, bb_area
         parallel::stopCluster(cl)  # Clean up cluster
         gc()
       }
-    # } else {
-      # Fallback to standard lapply
-    #   outer <- lapply(1:n_samples, runner)
-    # }
+    
 
     ######
 
